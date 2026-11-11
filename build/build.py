@@ -325,7 +325,7 @@ def simple(path, title, desc, h1, content, robots_index=True):
 def legal():
     simple('/mentions-legales/', f'Mentions légales | {BRAND}', f'Mentions légales du site evemarly.com, édité par {BRAND}.', 'Mentions légales', f"""
 <h2>Éditeur du site</h2>
-<p>Le site <strong>evemarly.com</strong> est édité par <strong>EVEMARLY</strong>, société en cours de création, détenue par <strong>Madame Ilham Boutaleb, née Errouane</strong>.</p>
+<p>Le site <strong>evemarly.com</strong> est édité par <strong>EVEMARLY</strong>, société en cours de création, détenue par <strong>Madame Ilham Errouane</strong>.</p>
 <ul>
 <li>Forme juridique : [À COMPLÉTER À L'IMMATRICULATION]</li>
 <li>Siège social : [ADRESSE À COMPLÉTER]</li>
@@ -334,7 +334,7 @@ def legal():
 <li>E-mail : <a href="mailto:{EMAIL}">{EMAIL}</a></li>
 </ul>
 <h2>Directrice de la publication</h2>
-<p>Madame Ilham Boutaleb.</p>
+<p>Madame Ilham Errouane.</p>
 <h2>Hébergement</h2>
 <p>Le site est hébergé par <strong>Cloudflare, Inc.</strong>, 101 Townsend St, San Francisco, CA 94107, États-Unis. Site : cloudflare.com.</p>
 <h2>Propriété intellectuelle</h2>
@@ -345,7 +345,7 @@ def legal():
     simple('/confidentialite/', f'Politique de confidentialité | {BRAND}', f'Comment {BRAND} collecte, utilise et protège vos données personnelles.', 'Politique de confidentialité', f"""
 <p>La présente politique explique quelles données personnelles {BRAND} collecte sur evemarly.com, pourquoi, et quels sont vos droits, conformément au Règlement général sur la protection des données (RGPD).</p>
 <h2>Responsable du traitement</h2>
-<p>EVEMARLY, société en cours de création, représentée par Madame Ilham Boutaleb. Contact : <a href="mailto:{EMAIL}">{EMAIL}</a>.</p>
+<p>EVEMARLY, société en cours de création, représentée par Madame Ilham Errouane. Contact : <a href="mailto:{EMAIL}">{EMAIL}</a>.</p>
 <h2>Données collectées</h2>
 <p>Lorsque vous vous inscrivez à la liste d'attente, nous collectons uniquement votre <strong>adresse e-mail</strong>, la date de l'inscription et la page depuis laquelle vous vous êtes inscrite.</p>
 <h2>Finalité et base légale</h2>
