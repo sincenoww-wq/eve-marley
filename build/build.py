@@ -10,7 +10,7 @@ EMAIL = 'contact@evemarly.com'
 TODAY = datetime.date(2026, 11, 11).isoformat()
 FRAMES = len([f for f in os.listdir(os.path.join(ROOT, 'film', 'd')) if f.endswith('.webp')])
 
-SOCIAL = [('Instagram', '#'), ('TikTok', '#'), ('YouTube', '#'), ('Facebook', '#'), ('Snapchat', '#')]
+SOCIAL = [('Instagram', '#', 'fa-instagram'), ('TikTok', '#', 'fa-tiktok')]
 CATS = ['Guides', 'Entretien', 'Matières', 'Savoir-faire', 'Style', 'Cadeaux', 'Féminité']
 
 def e(s): return html.escape(s, quote=True)
@@ -53,6 +53,8 @@ def head(title, desc, path, img='/img/og.jpg', kind='website', extra_ld=None, pr
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;1,6..96,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/fontawesome.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/brands.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
 <link rel="stylesheet" href="/assets/site.css">
 {preload}<script type="application/ld+json">{json.dumps(ld if len(ld) > 1 else ld[0], ensure_ascii=False)}</script>
 </head>
@@ -81,7 +83,7 @@ SHIELD = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3
 SWAP = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h13l-3-3M20 16H7l3 3"/></svg>'
 
 def footer():
-    soc = ''.join(f'<a href="{h}" rel="noopener">{n}</a>' for n, h in SOCIAL)
+    soc = ''.join(f'<a href="{h}" rel="noopener" aria-label="{BRAND} sur {n}" title="{n}"><i class="fa-brands {ic}" aria-hidden="true"></i></a>' for n, h, ic in SOCIAL)
     pay = ''.join(f'<li>{p}</li>' for p in ['CB', 'Visa', 'Mastercard', 'American Express', 'Apple Pay', 'Google Pay'])
     return f"""<footer class="site">
 <div class="wrap">
