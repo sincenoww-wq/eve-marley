@@ -1,0 +1,15 @@
+{
+  // Eve Marly : site statique (dossier src) + petite API pour la liste d'attente
+  "name": "eve-marley",
+  "main": "worker/index.js",
+  "compatibility_date": "2026-11-01",
+  "assets": {
+    "directory": "./src",
+    "binding": "ASSETS",
+    "not_found_handling": "404-page",
+    "html_handling": "auto-trailing-slash",
+    "run_worker_first": ["/api/*"]
+  }
+  // Liste d'attente : ajouter ici le KV quand il est créé, par exemple :
+  // "kv_namespaces": [{ "binding": "WAITLIST", "id": "ID_DU_KV" }]
+}
