@@ -8,6 +8,11 @@ SITE = 'https://evemarly.com'
 BRAND = 'Eve Marly'
 EMAIL = 'contact@evemarly.com'
 TODAY = datetime.date(2026, 11, 11).isoformat()
+import hashlib
+def ver(path):
+    return hashlib.md5(open(os.path.join(ROOT, path), 'rb').read()).hexdigest()[:8]
+CSS_V = ver('assets/site.css')
+JS_V = ver('assets/site.js')
 FRAMES = len([f for f in os.listdir(os.path.join(ROOT, 'film', 'd')) if f.endswith('.webp')])
 
 SOCIAL = [('Instagram', '#', 'fa-instagram'), ('TikTok', '#', 'fa-tiktok')]
@@ -55,7 +60,7 @@ def head(title, desc, path, img='/img/og.jpg', kind='website', extra_ld=None, pr
 <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;1,6..96,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/fontawesome.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/brands.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
-<link rel="stylesheet" href="/assets/site.css">
+<link rel="stylesheet" href="/assets/site.css?v={CSS_V}">
 {preload}<script type="application/ld+json">{json.dumps(ld if len(ld) > 1 else ld[0], ensure_ascii=False)}</script>
 </head>
 """
@@ -112,7 +117,7 @@ def footer():
   </div>
 </div>
 </footer>
-<script src="/assets/site.js" defer></script>
+<script src="/assets/site.js?v={JS_V}" defer></script>
 </body>
 </html>
 """
