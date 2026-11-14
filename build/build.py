@@ -143,6 +143,61 @@ PRODUCTS = [
     ('Kimono Lune', 'Soie', '390 €', 'p-kimono'),
 ]
 
+# Le portant : (clé, nom, matière, prix, phrase, image, largeur px, hauteur px, a son propre cintre)
+RACK = [
+    ('kimono', 'Kimono Lune', 'Soie', '390 €', "Un kimono long en soie lourde, manches larges et ceinture assortie.", 458, 900, True),
+    ('balconnet', 'Balconnet Aube', 'Dentelle Leavers', '180 €', "Un balconnet en dentelle Leavers noire, armatures fines et anneaux dorés.", 967, 760, False),
+    ('body', 'Body Minuit', 'Dentelle Leavers', '260 €', "Un body en dentelle et tulle, baleiné, qui se porte aussi sous une veste.", 346, 760, False),
+    ('culotte', 'Culotte Aube', 'Dentelle et tulle', '85 €', "La culotte assortie au balconnet Aube, bordée de festons.", 904, 760, False),
+    ('nuisette', 'Nuisette Lune', 'Soie', '290 €', "Une nuisette en soie champagne, bordée de dentelle au décolleté et à l'ourlet.", 427, 900, True),
+    ('string', 'String Aube', 'Dentelle et tulle', '75 €', "Le string de la ligne Aube, en dentelle et tulle.", 862, 760, False),
+]
+# hauteur affichée (px, desktop) de chaque pièce
+RACK_H = {'kimono': 560, 'balconnet': 250, 'body': 430, 'culotte': 235, 'nuisette': 470, 'string': 215}
+
+HANGER = '<svg class="hanger" viewBox="0 0 200 90" aria-hidden="true"><path d="M100 6c-9 0-14 7-12 14 1.6 5.6 7 7 12 9.5V40M100 40L14 78h172z" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round"/></svg>'
+
+def rack_html():
+    items = ''
+    for i, (k, n, m, p, d, w, h, own, ) in enumerate(RACK):
+        dh = RACK_H[k]
+        dw = round(w * (dh / h))
+        hanger = '' if own else HANGER
+        items += f"""<li class="piece{' own' if own else ''}" style="--w:{dw}px;--h:{dh}px">
+  <button type="button" class="swing" data-i="{i}" aria-label="{e(n)}, {e(m)}, {p}. Voir le détail" aria-haspopup="dialog">
+    {hanger}<img src="/img/rack/{k}.webp" alt="" width="{w}" height="{h}" loading="lazy" decoding="async">
+  </button>
+  <span class="tagline"><b>{e(n)}</b><small>{p}</small></span>
+</li>"""
+    data = json.dumps([{"k": k, "n": n, "m": m, "p": p, "d": d, "w": w, "h": h} for k, n, m, p, d, w, h, own in RACK], ensure_ascii=False)
+    return f"""<section class="rack-sec" id="collection" aria-labelledby="coll-t">
+  <div class="rack-head wrap">
+    <div><div class="eyebrow">Première collection</div><h2 id="coll-t">Le <em>portant</em></h2></div>
+    <p class="note">Passez la souris sur une pièce, cliquez pour la découvrir. Visuels provisoires.</p>
+  </div>
+  <div class="rack-stage">
+    <div class="rack-word" aria-hidden="true">{BRAND.upper()}</div>
+    <div class="rail" aria-hidden="true"></div>
+    <ul class="rack" role="list">{items}</ul>
+  </div>
+  <dialog class="piece-dlg" aria-labelledby="dlg-n">
+    <div class="dlg-in">
+      <div class="dlg-img"><img src="" alt=""></div>
+      <div class="dlg-txt">
+        <div class="eyebrow" id="dlg-m"></div>
+        <h3 id="dlg-n"></h3>
+        <p class="dlg-p"></p>
+        <p class="dlg-d"></p>
+        <p class="note">Visuel provisoire. La boutique ouvre bientôt.</p>
+        <a class="btn" href="#liste" data-close>Rejoindre la liste d'attente</a>
+      </div>
+      <button type="button" class="dlg-x" aria-label="Fermer" data-close>×</button>
+    </div>
+  </dialog>
+  <script type="application/json" id="rack-data">{data}</script>
+</section>
+"""
+
 def post_card(a):
     return f"""<a class="post rv" href="/journal/{a['slug']}/" data-cat="{e(a['cat'])}">
   <div class="ph"><img src="/img/{a['img']}.webp" alt="" loading="lazy" width="1100" height="614"></div>
@@ -164,7 +219,6 @@ def home():
         btn = f'<a class="btn" href="{cta[0]}">{cta[1]}</a>' if cta else ''
         sc += f'<div class="scene"><div class="eyebrow">{eb}</div><{tag}>{t}</{tag}><p>{p}</p>{btn}</div>\n'
     dots = ''.join(f'<li><button type="button" aria-label="Aller à la scène {i+1}"><i><b></b></i></button></li>' for i in range(5))
-    prods = ''.join(f"""<a class="card rv" href="#liste"><div class="ph"><img src="/img/{img}.webp" alt="{e(n)}, visuel provisoire" loading="lazy" width="600" height="800"><span class="tag">Bientôt</span></div><div class="meta"><h3>{e(n)}<small>{e(m)}</small></h3><span class="price">{p}</span></div></a>""" for n, m, p, img in PRODUCTS)
     latest = ''.join(post_card(a) for a in ARTICLES[:3])
     ld = [{"@context": "https://schema.org", "@type": "WebSite", "name": BRAND, "url": SITE + "/", "inLanguage": "fr-FR"}]
     pre = '<link rel="preload" as="image" href="/film/d/001.webp" media="(min-width:760px)">\n<link rel="preload" as="image" href="/film/m/001.webp" media="(max-width:759px)">\n'
@@ -187,15 +241,7 @@ def home():
   </div>
 </section>
 
-<section class="sec" id="collection" aria-labelledby="coll-t" style="padding-top:0">
-  <div class="wrap">
-    <div class="coll-head">
-      <div><div class="eyebrow">Première collection</div><h2 id="coll-t">Aube, Minuit <em>&amp;</em> Lune</h2></div>
-      <p class="note">Visuels provisoires. Les photos des pièces arrivent avec l'ouverture de la boutique.</p>
-    </div>
-    <div class="grid">{prods}</div>
-  </div>
-</section>
+{rack_html()}
 
 <section class="sec" aria-labelledby="mat-t">
   <div class="wrap split">
