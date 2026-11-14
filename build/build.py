@@ -18,16 +18,10 @@ FRAMES = len([f for f in os.listdir(os.path.join(ROOT, 'film', 'd')) if f.endswi
 SOCIAL = [('Instagram', '#', 'fa-instagram'), ('TikTok', '#', 'fa-tiktok')]
 CATS = ['Guides', 'Entretien', 'Matières', 'Savoir-faire', 'Style', 'Cadeaux', 'Féminité']
 
-MARK = ('<svg class="mark" viewBox="0 0 44 58" aria-hidden="true">'
-        '<path class="arch" d="M5 56V22C5 11.5 12.6 4 22 4s17 7.5 17 18v34" fill="none" stroke="currentColor" stroke-width="1.1"/>'
-        '<path class="arch2" d="M9 56V23c0-8 5.8-14.6 13-14.6S35 15 35 23v33" fill="none" stroke="currentColor" stroke-width=".5" opacity=".55"/>'
-        '<text x="11.5" y="39" font-family="Bodoni Moda, Didot, Georgia, serif" font-size="25" fill="currentColor">E</text>'
-        '<text x="19.5" y="45" font-family="Bodoni Moda, Didot, Georgia, serif" font-style="italic" font-size="19" fill="currentColor">M</text>'
-        '<path class="thread" d="M1 52c9-3 13 3.5 21 .8s9-9 21-5.5" fill="none" stroke="#e9cf98" stroke-width=".9" stroke-linecap="round"/>'
-        '</svg>')
-LOGO = ('<a class="logo" href="/" aria-label="' + BRAND + ', accueil">' + MARK +
-        '<span class="lockup"><span class="word">EVE <i>·</i> MARLY</span><span class="sub">Maison de lingerie</span></span></a>')
-
+LOGO = ('<a class="logo" href="/" aria-label="' + BRAND + ', accueil">'
+        '<img class="mark" src="/img/logo-mono.webp" alt="" width="271" height="546">'
+        '<span class="lockup"><img class="nom" src="/img/logo-nom.webp" alt="EVE MARLY" width="1444" height="153">'
+        '<span class="sub">Maison de lingerie</span></span></a>')
 def e(s): return html.escape(s, quote=True)
 
 def write(path, content):
@@ -39,7 +33,7 @@ def head(title, desc, path, img='/img/og.jpg', kind='website', extra_ld=None, pr
     url = SITE + path
     ld = [{
         "@context": "https://schema.org", "@type": "Organization", "name": BRAND,
-        "url": SITE + "/", "logo": SITE + "/favicon.svg", "email": EMAIL,
+        "url": SITE + "/", "logo": SITE + "/apple-touch-icon.png", "email": EMAIL,
         "sameAs": []
     }]
     if extra_ld: ld += extra_ld
@@ -64,7 +58,8 @@ def head(title, desc, path, img='/img/og.jpg', kind='website', extra_ld=None, pr
 <meta name="twitter:title" content="{e(title)}">
 <meta name="twitter:description" content="{e(desc)}">
 <meta name="twitter:image" content="{SITE}{img}">
-<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon-64.png" type="image/png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;1,6..96,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
@@ -341,7 +336,7 @@ def article(a):
            "image": f"{SITE}/img/{a['img']}.webp", "datePublished": a['date'], "dateModified": a['date'],
            "inLanguage": "fr-FR", "mainEntityOfPage": SITE + path,
            "author": {"@type": "Organization", "name": f"La Maison {BRAND}", "url": SITE + "/"},
-           "publisher": {"@type": "Organization", "name": BRAND, "logo": {"@type": "ImageObject", "url": SITE + "/favicon.svg"}}},
+           "publisher": {"@type": "Organization", "name": BRAND, "logo": {"@type": "ImageObject", "url": SITE + "/apple-touch-icon.png"}}},
           {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
               {"@type": "ListItem", "position": 1, "name": "Accueil", "item": SITE + "/"},
               {"@type": "ListItem", "position": 2, "name": "Journal", "item": SITE + "/journal/"},
