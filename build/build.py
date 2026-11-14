@@ -18,6 +18,16 @@ FRAMES = len([f for f in os.listdir(os.path.join(ROOT, 'film', 'd')) if f.endswi
 SOCIAL = [('Instagram', '#', 'fa-instagram'), ('TikTok', '#', 'fa-tiktok')]
 CATS = ['Guides', 'Entretien', 'Matières', 'Savoir-faire', 'Style', 'Cadeaux', 'Féminité']
 
+MARK = ('<svg class="mark" viewBox="0 0 44 58" aria-hidden="true">'
+        '<path class="arch" d="M5 56V22C5 11.5 12.6 4 22 4s17 7.5 17 18v34" fill="none" stroke="currentColor" stroke-width="1.1"/>'
+        '<path class="arch2" d="M9 56V23c0-8 5.8-14.6 13-14.6S35 15 35 23v33" fill="none" stroke="currentColor" stroke-width=".5" opacity=".55"/>'
+        '<text x="11.5" y="39" font-family="Bodoni Moda, Didot, Georgia, serif" font-size="25" fill="currentColor">E</text>'
+        '<text x="19.5" y="45" font-family="Bodoni Moda, Didot, Georgia, serif" font-style="italic" font-size="19" fill="currentColor">M</text>'
+        '<path class="thread" d="M1 52c9-3 13 3.5 21 .8s9-9 21-5.5" fill="none" stroke="#e9cf98" stroke-width=".9" stroke-linecap="round"/>'
+        '</svg>')
+LOGO = ('<a class="logo" href="/" aria-label="' + BRAND + ', accueil">' + MARK +
+        '<span class="lockup"><span class="word">EVE <i>·</i> MARLY</span><span class="sub">Maison de lingerie</span></span></a>')
+
 def e(s): return html.escape(s, quote=True)
 
 def write(path, content):
@@ -72,7 +82,7 @@ def nav(current=''):
         return f'<li{cls}><a href="{href}"{cur}>{label}</a></li>'
     return f"""<a class="skip" href="#contenu">Aller au contenu</a>
 <header class="nav">
-  <a class="logo" href="/" aria-label="{BRAND}, accueil"><span class="mono" aria-hidden="true">EM</span><span class="word">{BRAND}</span></a>
+  {LOGO}
   <nav aria-label="Navigation principale"><ul>
     {a('/#collection','Collection','collection')}
     {a('/#maison','La Maison','maison')}
@@ -94,7 +104,7 @@ def footer():
 <div class="wrap">
   <div class="f-grid">
     <div>
-      <a class="logo" href="/" aria-label="{BRAND}, accueil"><span class="mono" aria-hidden="true">EM</span><span class="word">{BRAND}</span></a>
+      {LOGO}
       <p style="max-width:34ch;margin:18px 0 0">Maison de lingerie de luxe. Dentelle, soie et tulle, en petites séries.</p>
       <div class="social" aria-label="Réseaux sociaux">{soc}</div>
     </div>

@@ -28,12 +28,18 @@ h1,h2,h3{font-family:var(--display);font-weight:400;text-wrap:balance;line-heigh
 .nav{position:fixed;inset:0 0 auto 0;z-index:60;display:flex;align-items:center;justify-content:space-between;gap:20px;padding:18px var(--gutter);transition:background .5s,padding .5s}
 .nav.solid,.page .nav{background:rgba(20,13,18,.82);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
 .logo{display:inline-flex;align-items:center;gap:12px;text-decoration:none;white-space:nowrap}
-.logo .mono{width:36px;height:36px;border:1px solid var(--champagne);border-radius:50%;display:grid;place-items:center;font-family:var(--display);font-style:italic;font-size:15px;color:var(--champagne)}
-.logo .word{font-family:var(--display);font-size:19px;letter-spacing:.3em;text-transform:uppercase}
+.logo .mark{width:34px;height:45px;color:var(--champagne);flex:0 0 auto;overflow:visible}
+.logo .mark .thread{stroke-dasharray:60;stroke-dashoffset:0;transition:stroke-dashoffset 1.2s cubic-bezier(.2,.8,.2,1)}
+.logo:hover .mark .thread{animation:thread 1.4s cubic-bezier(.2,.8,.2,1)}
+@keyframes thread{from{stroke-dashoffset:60}to{stroke-dashoffset:0}}
+.logo .lockup{display:grid;gap:5px;line-height:1}
+.logo .word{font-family:var(--display);font-weight:400;font-size:20px;letter-spacing:.34em;text-transform:uppercase;color:var(--ivoire);margin-right:-.34em}
+.logo .word i{font-style:normal;color:var(--champagne);letter-spacing:0;margin:0 .1em 0 -.12em}
+.logo .sub{font-family:var(--body);font-size:9px;letter-spacing:.52em;text-transform:uppercase;color:var(--champagne);opacity:.9}
 .nav ul{display:flex;gap:clamp(14px,2.6vw,36px);list-style:none;margin:0;padding:0}
 .nav ul a{font-size:12px;letter-spacing:.22em;text-transform:uppercase;text-decoration:none;color:var(--ivoire-dim);padding:12px 0;display:inline-block;transition:color .3s}
 .nav ul a:hover,.nav ul a[aria-current]{color:var(--ivoire)}
-@media (max-width:820px){.nav ul li:not(.keep){display:none}.logo .word{font-size:16px;letter-spacing:.24em}}
+@media (max-width:820px){.nav ul li:not(.keep){display:none}.logo .word{font-size:16px;letter-spacing:.26em}.logo .sub{font-size:8px;letter-spacing:.42em}.logo .mark{width:28px;height:37px}}
 
 /* Boutons */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:50px;padding:0 28px;border:1px solid var(--champagne);color:var(--ivoire);text-decoration:none;font:400 12px/1 var(--body);letter-spacing:.24em;text-transform:uppercase;background:transparent;cursor:pointer;position:relative;overflow:hidden;isolation:isolate;transition:color .45s}
@@ -264,4 +270,4 @@ footer.site a:hover{color:var(--ivoire)}
   .scene h1,.scene h2{font-size:clamp(30px,9.5vw,40px)}
   .scene p{font-size:14.5px;margin-top:8px}
 }
-@media (max-width:360px){.nav ul a{font-size:10px;letter-spacing:.14em}.logo .mono{width:30px;height:30px;font-size:13px}.logo .word{font-size:14px;letter-spacing:.2em}}
+@media (max-width:360px){.nav ul a{font-size:10px;letter-spacing:.14em}.logo .mark{width:24px;height:32px}.logo .word{font-size:13px;letter-spacing:.2em}.logo .sub{display:none}}
