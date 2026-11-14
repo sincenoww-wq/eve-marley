@@ -243,3 +243,25 @@ footer.site a:hover{color:var(--ivoire)}
 }
 @media (max-width:720px){.dlg-in{grid-template-columns:1fr}.dlg-img{padding:24px}.dlg-img img{max-height:42vh}.dlg-txt{padding:24px}}
 @media (prefers-reduced-motion:reduce){.dlg-img img{animation:none}}
+
+/* Film au scroll : version téléphone (image 4:5 en haut, texte dessous) */
+@media (max-width:759px){
+  .film{height:430vh}
+  .film-stage{--ih:min(125vw,60svh);background:#0d080b}
+  .film-stage canvas{top:60px;bottom:auto;height:var(--ih)}
+  .film-stage::after{background:linear-gradient(180deg,rgba(13,8,11,.55) 0,rgba(13,8,11,0) 130px,rgba(13,8,11,0) calc(60px + var(--ih) - 140px),#0d080b calc(60px + var(--ih) - 4px))}
+  .scene{top:calc(60px + var(--ih) - 46px);bottom:auto;transform:none;padding:0 22px}
+  .scene .eyebrow{font-size:11px}
+  .scene h1,.scene h2{font-size:clamp(34px,10.5vw,46px);margin-top:10px;text-shadow:none}
+  .scene p{font-size:15.5px;margin-top:12px;text-shadow:none;color:var(--ivoire-dim)}
+  .scene .btn{margin-top:18px;min-height:46px;background:transparent}
+  .film-ui{bottom:max(14px,env(safe-area-inset-bottom));justify-content:center}
+  .film-hint{display:none}
+  .dots button{width:40px}
+}
+@media (max-width:759px) and (max-height:700px){
+  .film-stage{--ih:min(125vw,54svh)}
+  .scene h1,.scene h2{font-size:clamp(30px,9.5vw,40px)}
+  .scene p{font-size:14.5px;margin-top:8px}
+}
+@media (max-width:360px){.nav ul a{font-size:10px;letter-spacing:.14em}.logo .mono{width:30px;height:30px;font-size:13px}.logo .word{font-size:14px;letter-spacing:.2em}}
