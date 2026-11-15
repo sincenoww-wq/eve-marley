@@ -232,30 +232,53 @@ ROOMS = [
 def room_id(cat):
     return 'salle-' + cat.lower().replace(' ', '-')
 
+LAYOUTS = {'Ensembles': 'gal', 'Soutiens-gorge': 'fan', 'Bralettes': 'cols', 'Bodies': 'ring',
+           'Nuisettes': 'gal', 'Kimonos': 'fan', 'Culottes': 'ring', 'Pyjamas': 'cols'}
+HINTS = {'gal': 'Défilez : la salle se traverse', 'fan': 'Défilez : les cartes se déploient', 'cols': 'Défilez : les colonnes se croisent', 'ring': 'Défilez : le carrousel tourne'}
+
+def frame(pr, i, extra=''):
+    price = euros(sell_price(pr['cost']))
+    return f"""<a class="fr" style="--i:{i}{extra}" href="/produit/{pr['slug']}/" aria-label="{e(pr['name'])}, {price}">
+  <span class="ph"><img src="{e(pr['images'][0])}" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer"></span>
+  <span class="cartel"><b>{e(pr['name'])}</b><small>{price}</small></span>
+</a>"""
+
 def dressing_html():
     P = PRODUCTS_DATA
     rooms, chips, navl = '', '', ''
     for n, (cat, style, mat, line) in enumerate(ROOMS, 1):
         prods = [x for x in P if x['cat'] == cat]
         if not prods: continue
-        items = ''
-        for i, pr in enumerate(prods):
-            price = euros(sell_price(pr['cost']))
-            items += f"""<a class="fr" style="--i:{i}" href="/produit/{pr['slug']}/" aria-label="{e(pr['name'])}, {price}">
-  <span class="ph"><img src="{e(pr['images'][0])}" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer"></span>
-  <span class="cartel"><b>{e(pr['name'])}</b><small>{price}</small></span>
-</a>"""
+        lay = LAYOUTS[cat]
         rid = room_id(cat)
-        rooms += f"""<section class="room" id="{rid}" data-style="{style}" aria-labelledby="{rid}-t">
+        head = f'<div class="panel-t"><div class="eyebrow">Salle {n:02d} · {e(mat)}</div><h2 id="{rid}-t">{e(cat)}</h2><p>{e(line)}</p><a class="btn" href="/boutique/#{e(cat)}">Voir les {len(prods)} pièces</a><span class="hint" aria-hidden="true">{HINTS[lay]}</span></div>'
+        if lay == 'gal':
+            inner = f"""<div class="track">{head}
+      {''.join(frame(pr, i) for i, pr in enumerate(prods))}
+      <a class="panel-end" href="/boutique/#{e(cat)}"><span>Toute la salle<br><em>{e(cat)}</em></span></a>
+    </div>
+    <div class="room-bar" aria-hidden="true"><b></b></div>"""
+        elif lay == 'fan':
+            inner = f"""<div class="wrap stage-head">{head}</div>
+    <div class="fan" data-n="{len(prods)}">{''.join(frame(pr, i) for i, pr in enumerate(prods))}</div>
+    <div class="room-bar" aria-hidden="true"><b></b></div>"""
+        elif lay == 'ring':
+            lst = list(prods)
+            while len(lst) < 7: lst += prods
+            lst = lst[:10]
+            items = ''.join(frame(pr, i, f';--a:{i * 360 / len(lst):.3f}deg') for i, pr in enumerate(lst))
+            inner = f"""<div class="wrap stage-head">{head}</div>
+    <div class="ring-scene"><div class="ring" data-n="{len(lst)}">{items}</div></div>
+    <div class="room-bar" aria-hidden="true"><b></b></div>"""
+        else:
+            cols = [[], [], []]
+            for i, pr in enumerate(prods): cols[i % 3].append(frame(pr, i))
+            inner = f"""<div class="wrap cols-wrap">{head}<div class="cols">{''.join('<div class="col">' + ''.join(c) + '</div>' for c in cols)}</div></div>"""
+        rooms += f"""<section class="room l-{lay}" id="{rid}" data-style="{style}" data-lay="{lay}" aria-labelledby="{rid}-t">
   <div class="room-pin">
     <div class="room-deco" aria-hidden="true"></div>
     <div class="room-word" aria-hidden="true">{e(cat)}</div>
-    <div class="track">
-      <div class="panel-t"><div class="eyebrow">Salle {n:02d} · {e(mat)}</div><h2 id="{rid}-t">{e(cat)}</h2><p>{e(line)}</p><a class="btn" href="/boutique/#{e(cat)}">Voir les {len(prods)} pièces</a></div>
-      {items}
-      <a class="panel-end" href="/boutique/#{e(cat)}"><span>Toute la salle<br><em>{e(cat)}</em></span></a>
-    </div>
-    <div class="room-bar" aria-hidden="true"><b></b></div>
+    {inner}
   </div>
 </section>
 """
@@ -266,7 +289,7 @@ def dressing_html():
   <div class="wrap">
     <div class="eyebrow">La galerie</div>
     <h2 id="dr-t">Huit salles, <em>huit univers.</em></h2>
-    <p>Chaque catégorie a sa salle et ses cadres. Faites défiler pour la traverser, cliquez sur un tableau pour ouvrir la fiche.</p>
+    <p>Une salle par catégorie, et jamais deux fois de suite la même mise en scène. Faites défiler, cliquez sur une pièce pour ouvrir sa fiche.</p>
     <ul class="dress-chips">{chips}</ul>
   </div>
 </section>
@@ -308,7 +331,9 @@ def home():
     body = f"""<body>
 {nav()}
 <main id="contenu">
+<div class="splash" aria-hidden="true"><img src="/img/logo-mono-d.webp" alt="" width="271" height="546"><span>Eve Marly</span></div>
 <section class="hero2" aria-labelledby="h-t">
+  <div class="petals" aria-hidden="true"><i style="--x:0%;--d:9s;--w:0.0s;--s:0.60"></i><i style="--x:37%;--d:14s;--w:10.3s;--s:0.82"></i><i style="--x:74%;--d:10s;--w:8.6s;--s:1.04"></i><i style="--x:11%;--d:15s;--w:6.9s;--s:1.26"></i><i style="--x:48%;--d:11s;--w:5.2s;--s:0.60"></i><i style="--x:85%;--d:16s;--w:3.5s;--s:0.82"></i><i style="--x:22%;--d:12s;--w:1.8s;--s:1.04"></i><i style="--x:59%;--d:17s;--w:0.1s;--s:1.26"></i><i style="--x:96%;--d:13s;--w:10.4s;--s:0.60"></i><i style="--x:33%;--d:9s;--w:8.7s;--s:0.82"></i><i style="--x:70%;--d:14s;--w:7.0s;--s:1.04"></i><i style="--x:7%;--d:10s;--w:5.3s;--s:1.26"></i><i style="--x:44%;--d:15s;--w:3.6s;--s:0.60"></i><i style="--x:81%;--d:11s;--w:1.9s;--s:0.82"></i><i style="--x:18%;--d:16s;--w:0.2s;--s:1.04"></i><i style="--x:55%;--d:12s;--w:10.5s;--s:1.26"></i></div>
   <div class="wrap">
     <div>
       <div class="eyebrow">Eve Marly · Maison de lingerie</div>
