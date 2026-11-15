@@ -196,3 +196,26 @@ if(reduce){ draw(N-1); } else { requestAnimationFrame(tick); }
   dlg.querySelectorAll('[data-close]').forEach(function(b){ b.addEventListener('click', close); });
   dlg.addEventListener('click', function(e){ if(e.target === dlg) close(); });
 })();
+
+/* Fiche produit : galerie */
+(function(){
+  var main = document.querySelector('.pdp-main img'); if(!main) return;
+  var thumbs = document.querySelectorAll('.thumb');
+  thumbs.forEach(function(t, i){
+    if(i === 0) t.setAttribute('aria-current','true');
+    t.addEventListener('click', function(){
+      main.src = t.getAttribute('data-src');
+      thumbs.forEach(function(x){ x.removeAttribute('aria-current'); });
+      t.setAttribute('aria-current','true');
+    });
+  });
+})();
+/* Boutique : filtres */
+(function(){
+  var bs = document.querySelectorAll('.shop-filters button'); if(!bs.length) return;
+  bs.forEach(function(b){ b.addEventListener('click', function(){
+    var c = b.getAttribute('data-cat');
+    bs.forEach(function(x){ x.setAttribute('aria-pressed', x===b ? 'true' : 'false'); });
+    document.querySelectorAll('.shop-grid .card').forEach(function(card){ card.hidden = !(c==='all' || card.getAttribute('data-cat')===c); });
+  }); });
+})();

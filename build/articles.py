@@ -172,7 +172,7 @@ ARTICLES = [
 
 <blockquote>Choisir une dentelle, c'est déjà choisir une histoire.</blockquote>
 
-<p>Chez Eve Marly, la dentelle est le point de départ de chaque pièce. C'est elle qui donne le ton, le motif et la façon dont la lingerie va vivre sur la peau.</p>
+<p>Chez Eve Marly, la dentelle guide notre sélection : son motif, sa souplesse et la façon dont elle vit sur la peau.</p>
 """},
 {
 "slug": "choisir-sa-lingerie-selon-sa-morphologie",

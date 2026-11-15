@@ -31,6 +31,7 @@ def write(path, content):
 
 def head(title, desc, path, img='/img/og.jpg', kind='website', extra_ld=None, preload=''):
     url = SITE + path
+    img_abs = img if img.startswith('http') else SITE + img
     ld = [{
         "@context": "https://schema.org", "@type": "Organization", "name": BRAND,
         "url": SITE + "/", "logo": SITE + "/apple-touch-icon.png", "email": EMAIL,
@@ -53,11 +54,11 @@ def head(title, desc, path, img='/img/og.jpg', kind='website', extra_ld=None, pr
 <meta property="og:title" content="{e(title)}">
 <meta property="og:description" content="{e(desc)}">
 <meta property="og:url" content="{url}">
-<meta property="og:image" content="{SITE}{img}">
+<meta property="og:image" content="{img_abs}">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="{e(title)}">
 <meta name="twitter:description" content="{e(desc)}">
-<meta name="twitter:image" content="{SITE}{img}">
+<meta name="twitter:image" content="{img_abs}">
 <link rel="icon" href="/favicon-64.png" type="image/png">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -79,7 +80,7 @@ def nav(current=''):
 <header class="nav">
   {LOGO}
   <nav aria-label="Navigation principale"><ul>
-    {a('/#collection','Collection','collection')}
+    {a('/boutique/','Boutique','boutique') if PRODUCTS_DATA else a('/#collection','Collection','collection')}
     {a('/#maison','La Maison','maison')}
     {a('/journal/','Journal','journal')}
     {a('/#liste',"Liste d'attente",'liste',True)}
@@ -100,7 +101,7 @@ def footer():
   <div class="f-grid">
     <div>
       {LOGO}
-      <p style="max-width:34ch;margin:18px 0 0">Maison de lingerie de luxe. Dentelle, soie et tulle, en petites séries.</p>
+      <p style="max-width:34ch;margin:18px 0 0">Lingerie élégante à prix doux. Dentelle, satin et tulle.</p>
       <div class="social" aria-label="Réseaux sociaux">{soc}</div>
     </div>
     <div><h3>La Maison</h3><ul><li><a href="/#collection">Collection</a></li><li><a href="/#maison">Notre histoire</a></li><li><a href="/#rituel">Le rituel</a></li><li><a href="/#liste">Liste d'attente</a></li></ul></div>
@@ -132,7 +133,7 @@ def waitlist(title='Soyez la première à <em>découvrir</em> la collection.'):
 <div class="wrap inner">
   <div class="eyebrow">Liste d'attente</div>
   <h2 id="liste-t">{title}</h2>
-  <p>Accès en avant-première à la prévente et aux pièces en série limitée. Un e-mail de temps en temps, jamais plus.</p>
+  <p>Les nouveautés et les offres de lancement en avant-première. Un e-mail de temps en temps, jamais plus.</p>
   <form class="wl" novalidate>
     <label class="sr" for="email-{abs(hash(title))%999}">Adresse e-mail</label>
     <input id="email-{abs(hash(title))%999}" type="email" name="email" placeholder="Votre adresse e-mail" autocomplete="email" required>
@@ -155,12 +156,12 @@ PRODUCTS = [
 
 # Le portant : (clé, nom, matière, prix, phrase, image, largeur px, hauteur px, a son propre cintre)
 RACK = [
-    ('kimono', 'Kimono Lune', 'Soie', '390 €', "Un kimono long en soie lourde, manches larges et ceinture assortie.", 458, 900, True),
-    ('balconnet', 'Balconnet Aube', 'Dentelle Leavers', '180 €', "Un balconnet en dentelle Leavers noire, armatures fines et anneaux dorés.", 967, 760, False),
-    ('body', 'Body Minuit', 'Dentelle Leavers', '260 €', "Un body en dentelle et tulle, baleiné, qui se porte aussi sous une veste.", 346, 760, False),
-    ('culotte', 'Culotte Aube', 'Dentelle et tulle', '85 €', "La culotte assortie au balconnet Aube, bordée de festons.", 904, 760, False),
-    ('nuisette', 'Nuisette Lune', 'Soie', '290 €', "Une nuisette en soie champagne, bordée de dentelle au décolleté et à l'ourlet.", 427, 900, True),
-    ('string', 'String Aube', 'Dentelle et tulle', '75 €', "Le string de la ligne Aube, en dentelle et tulle.", 862, 760, False),
+    ('kimono', 'Kimono en satin', 'Satin', 'Bientôt', "Un kimono long et fluide, manches larges et ceinture assortie.", 458, 900, True),
+    ('balconnet', 'Soutien-gorge en dentelle', 'Dentelle', 'Bientôt', "Un soutien-gorge en dentelle noire, armatures fines et anneaux dorés.", 967, 760, False),
+    ('body', 'Body en dentelle', 'Dentelle et tulle', 'Bientôt', "Un body en dentelle et tulle, qui se porte aussi sous une veste.", 346, 760, False),
+    ('culotte', 'Culotte en dentelle', 'Dentelle et tulle', 'Bientôt', "Une culotte bordée de festons, assortie au soutien-gorge.", 904, 760, False),
+    ('nuisette', 'Nuisette en satin', 'Satin', 'Bientôt', "Une nuisette en satin champagne, bordée de dentelle au décolleté et à l'ourlet.", 427, 900, True),
+    ('string', 'String en dentelle', 'Dentelle et tulle', 'Bientôt', "Un string en dentelle et tulle.", 862, 760, False),
 ]
 # hauteur affichée (px, desktop) de chaque pièce
 RACK_H = {'kimono': 560, 'balconnet': 250, 'body': 430, 'culotte': 235, 'nuisette': 470, 'string': 215}
@@ -218,11 +219,11 @@ def post_card(a):
 
 def home():
     scenes = [
-        ('h1', 'Eve Marly', '<em>Un fil.</em> Toute une collection.', 'Maison de lingerie de luxe. Dentelle, soie et tulle, en petites séries.', None),
-        ('h2', 'La matière', 'Tout commence par <em>la dentelle.</em>', 'Une dentelle choisie à la main, fine et souple comme une seconde peau.', None),
-        ('h2', "L'atelier", 'Chaque geste <em>compte.</em>', 'Une coupe essayée puis réessayée, des finitions que personne ne voit et que l\'on sent pourtant.', None),
-        ('h2', 'La collection', 'Pensée <em>pour vous.</em>', 'Peu de modèles, faits pour durer, choisis d\'abord pour soi.', None),
-        ('h2', 'Le rituel', 'Le rituel <em>commence.</em>', 'Un coffret, un mot écrit à la main, un envoi discret.', ('/#liste', 'Rejoindre la liste')),
+        ('h1', 'Eve Marly', '<em>Un fil.</em> Toute une collection.', 'Lingerie élégante à prix doux. Dentelle, satin et tulle.', None),
+        ('h2', 'La matière', 'Tout commence par <em>la dentelle.</em>', 'Des dentelles fines et souples, choisies pour leur toucher.', None),
+        ('h2', "La sélection", 'Chaque pièce <em>compte.</em>', 'Des modèles choisis un à un, pour leur tombé et leur confort.', None),
+        ('h2', 'La collection', 'Pensée <em>pour vous.</em>', 'Des pièces élégantes, à des prix qui permettent de se faire plaisir.', None),
+        ('h2', 'Le rituel', 'Le rituel <em>commence.</em>', 'Un colis discret, suivi jusqu\'à chez vous.', ('/#liste', 'Rejoindre la liste')),
     ]
     sc = ''
     for tag, eb, t, p, cta in scenes:
@@ -247,7 +248,7 @@ def home():
 <section class="sec" id="maison" aria-labelledby="maison-t">
   <div class="wrap two">
     <div class="eyebrow" id="maison-t">La Maison</div>
-    <p class="lead rv">Eve Marly est née d'une idée simple : la lingerie se choisit d'abord <em>pour soi.</em> Chaque pièce commence par une dentelle choisie à la main et se termine dans un coffret, avec un mot écrit pour vous.</p>
+    <p class="lead rv">Eve Marly est née d'une idée simple : la lingerie se choisit d'abord <em>pour soi.</em> Nous choisissons des pièces élégantes et confortables, à des prix qui permettent de se faire plaisir souvent.</p>
   </div>
 </section>
 
@@ -260,8 +261,8 @@ def home():
       <div class="eyebrow">Les matières</div>
       <h2 id="mat-t">Trois matières, choisies <em>pour la peau.</em></h2>
       <dl class="mat">
-        <div><dt>Dentelle</dt><dd>Dentelle Leavers, tissée sur des métiers centenaires du Nord de la France. Fine, souple, aux motifs profonds.</dd></div>
-        <div><dt>Soie</dt><dd>Une soie lourde et fluide pour les nuisettes et les kimonos. Elle tombe droit et prend la chaleur du corps.</dd></div>
+        <div><dt>Dentelle</dt><dd>Florale ou graphique, fine et souple. La matière de la plupart de nos ensembles et bodies.</dd></div>
+        <div><dt>Satin</dt><dd>Fluide et lumineux, pour les nuisettes, les pyjamas et les kimonos.</dd></div>
         <div><dt>Tulle</dt><dd>Un tulle léger, presque invisible, pour les transparences et les finitions.</dd></div>
       </dl>
     </div>
@@ -271,10 +272,10 @@ def home():
 <section class="sec band-bg" id="rituel" aria-labelledby="rit-t">
   <div class="wrap">
     <div class="eyebrow">Le rituel</div>
-    <h2 id="rit-t" style="max-width:16ch">De l'atelier <em>jusqu'à vous.</em></h2>
+    <h2 id="rit-t" style="max-width:16ch">De la sélection <em>jusqu'à vous.</em></h2>
     <ol class="steps">
-      <li class="rv"><h3>Le coffret</h3><p>Chaque commande part dans un coffret rigide, entre deux feuilles de papier de soie.</p></li>
-      <li class="rv"><h3>La carte</h3><p>Un mot écrit à la main, pour vous ou pour la personne à qui vous l'offrez.</p></li>
+      <li class="rv"><h3>La sélection</h3><p>Des modèles choisis pour leur coupe, leur matière et les avis des clientes.</p></li>
+      <li class="rv"><h3>Le suivi</h3><p>Un numéro de suivi pour chaque commande, livrée en 7 à 15 jours ouvrés environ.</p></li>
       <li class="rv"><h3>L'envoi discret</h3><p>Un colis neutre, sans le nom de la marque à l'extérieur.</p></li>
       <li class="rv"><h3>La bonne taille</h3><p>Un guide des tailles précis et un échange simple si la taille ne convient pas.</p></li>
     </ol>
@@ -294,8 +295,8 @@ def home():
 {waitlist()}
 </main>
 """
-    write('index.html', head(f'{BRAND} · Maison de lingerie de luxe, dentelle et soie',
-        'Eve Marly, maison de lingerie de luxe : dentelle Leavers, soie et tulle en petites séries. Rejoignez la liste d\'attente de la première collection.',
+    write('index.html', head(f'{BRAND} · Lingerie élégante, dentelle et satin',
+        'Eve Marly, lingerie élégante à prix doux : ensembles en dentelle, bodies, nuisettes et kimonos en satin. Livraison suivie et discrète.',
         '/', extra_ld=ld, preload=pre) + body + footer())
 
 def journal():
@@ -353,7 +354,7 @@ def article(a):
   <div class="prose">{a['body']}</div>
   <aside class="cta-box">
     <div class="eyebrow">Première collection</div>
-    <h2>Dentelle, soie et tulle, en petites séries.</h2>
+    <h2>Dentelle, satin et tulle, à prix doux.</h2>
     <a class="btn" href="/#liste">Rejoindre la liste d'attente</a>
   </aside>
 </article>
@@ -437,9 +438,110 @@ def legal():
 """
     write('404.html', head(f'Page introuvable | {BRAND}', 'Cette page est introuvable.', '/404') .replace('index, follow', 'noindex, follow') + body + footer())
 
+
+# ---------- Boutique ----------
+import math
+PRODUCTS_DATA = json.load(open(os.path.join(os.path.dirname(__file__), 'products.json'), encoding='utf-8'))
+SHOP_CATS = ['Ensembles', 'Soutiens-gorge', 'Bodies', 'Nuisettes', 'Kimonos', 'Culottes', 'Pyjamas']
+COEF = 2.5
+
+def sell_price(cost):
+    """Prix de vente = coût (produit + livraison) × 2,5, arrondi à x,90 €."""
+    return max(9.9, math.ceil(cost * COEF) - 0.10)
+
+def euros(v):
+    return f"{v:.2f}".replace('.', ',') + ' €'
+
+def product_card(pr):
+    return f"""<a class="card rv" href="/produit/{pr['slug']}/" data-cat="{e(pr['cat'])}" data-price="{sell_price(pr['cost']):.2f}">
+  <div class="ph"><img src="{e(pr['images'][0])}" alt="{e(pr['name'])}" loading="lazy" referrerpolicy="no-referrer"></div>
+  <div class="meta"><h3>{e(pr['name'])}<small>{e(pr['cat'])}</small></h3><span class="price">{euros(sell_price(pr['cost']))}</span></div>
+</a>"""
+
+def shop():
+    if not PRODUCTS_DATA: return
+    cats = [c for c in SHOP_CATS if any(p['cat'] == c for p in PRODUCTS_DATA)]
+    filt = '<button type="button" data-cat="all" aria-pressed="true">Tout</button>' + ''.join(f'<button type="button" data-cat="{e(c)}" aria-pressed="false">{e(c)}</button>' for c in cats)
+    cards = ''.join(product_card(p) for p in PRODUCTS_DATA)
+    ld = [{"@context": "https://schema.org", "@type": "CollectionPage", "name": f"Boutique {BRAND}", "url": SITE + "/boutique/"}]
+    body = f"""<body class="page">
+{nav('boutique')}
+<main id="contenu">
+  <div class="pagehead">
+    <p class="crumbs"><a href="/">Accueil</a> / Boutique</p>
+    <div class="eyebrow">La boutique</div>
+    <h1>Toute la <em style="color:var(--champagne)">sélection</em></h1>
+    <p>Ensembles en dentelle, bodies, nuisettes et kimonos en satin. Livraison offerte et suivie.</p>
+    <div class="filters shop-filters" role="group" aria-label="Filtrer par catégorie">{filt}</div>
+  </div>
+  <div class="wrap"><div class="grid shop-grid">{cards}</div></div>
+  <div style="height:100px"></div>
+</main>
+"""
+    write('boutique/index.html', head(f'Boutique · Lingerie en dentelle et satin | {BRAND}',
+        'La boutique Eve Marly : ensembles en dentelle, soutiens-gorge, bodies, nuisettes et kimonos en satin. Livraison offerte et suivie.',
+        '/boutique/', extra_ld=ld) + body + footer())
+    for p in PRODUCTS_DATA: product_page(p)
+
+def product_page(pr):
+    path = f"/produit/{pr['slug']}/"
+    price = sell_price(pr['cost'])
+    imgs = pr['images']
+    thumbs = ''.join(f'<button type="button" class="thumb" data-src="{e(u)}" aria-label="Photo {i+1}"><img src="{e(u)}" alt="" loading="lazy" referrerpolicy="no-referrer"></button>' for i, u in enumerate(imgs))
+    colors = ''.join(f'<label class="chip"><input type="radio" name="couleur" value="{e(c)}"{" checked" if i == 0 else ""}><span>{e(c)}</span></label>' for i, c in enumerate(pr.get('colors', [])))
+    sizes = ''.join(f'<label class="chip"><input type="radio" name="taille" value="{e(t)}"><span>{e(t)}</span></label>' for t in pr.get('sizes', []))
+    details = ''.join(f'<li>{e(d)}</li>' for d in pr.get('details', []))
+    rel = [x for x in PRODUCTS_DATA if x['cat'] == pr['cat'] and x['slug'] != pr['slug']][:3]
+    rel_html = ''.join(product_card(x) for x in rel)
+    ld = [{"@context": "https://schema.org", "@type": "Product", "name": pr['name'], "image": imgs, "description": pr['desc'],
+           "brand": {"@type": "Brand", "name": BRAND}, "category": pr['cat'],
+           "offers": {"@type": "Offer", "price": f"{price:.2f}", "priceCurrency": "EUR", "availability": "https://schema.org/PreOrder", "url": SITE + path}},
+          {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
+              {"@type": "ListItem", "position": 1, "name": "Accueil", "item": SITE + "/"},
+              {"@type": "ListItem", "position": 2, "name": "Boutique", "item": SITE + "/boutique/"},
+              {"@type": "ListItem", "position": 3, "name": pr['name'], "item": SITE + path}]}]
+    body = f"""<body class="page">
+{nav('boutique')}
+<main id="contenu">
+<div class="wrap">
+  <p class="crumbs"><a href="/">Accueil</a> / <a href="/boutique/">Boutique</a> / {e(pr['cat'])}</p>
+  <div class="pdp">
+    <div class="pdp-gallery">
+      <div class="pdp-main"><img src="{e(imgs[0])}" alt="{e(pr['name'])}" referrerpolicy="no-referrer"></div>
+      <div class="pdp-thumbs">{thumbs}</div>
+    </div>
+    <div class="pdp-info">
+      <div class="eyebrow">{e(pr['cat'])}</div>
+      <h1>{e(pr['name'])}</h1>
+      <p class="pdp-price">{euros(price)}</p>
+      <p class="pdp-desc">{e(pr['desc'])}</p>
+      <form class="pdp-form" onsubmit="return false">
+        {'<fieldset><legend>Couleur</legend><div class="chips">' + colors + '</div></fieldset>' if colors else ''}
+        {'<fieldset><legend>Taille <a href="/journal/comment-choisir-sa-taille-de-soutien-gorge/">Guide des tailles</a></legend><div class="chips">' + sizes + '</div></fieldset>' if sizes else ''}
+        <button class="btn pdp-buy" type="button" disabled aria-describedby="pdp-note">Commander</button>
+        <p class="note" id="pdp-note">Le paiement en ligne ouvre très bientôt. <a href="/#liste">Être prévenue</a></p>
+      </form>
+      <ul class="pdp-trust">
+        <li>Livraison offerte et suivie, en 7 à 15 jours ouvrés environ</li>
+        <li>Colis discret</li>
+        <li>Paiement sécurisé</li>
+      </ul>
+      {'<details open><summary>Détails</summary><ul>' + details + '</ul></details>' if details else ''}
+      <details><summary>Entretien</summary><p>Lavage à la main à l'eau froide, séchage à plat. Nos conseils : <a href="/journal/laver-lingerie-en-dentelle/">laver la dentelle</a>, <a href="/journal/entretenir-lingerie-en-soie/">entretenir le satin et la soie</a>.</p></details>
+    </div>
+  </div>
+  {'<section class="related" aria-labelledby="rel-t"><h2 id="rel-t" style="font-size:34px;margin:0 0 30px">Vous aimerez aussi</h2><div class="grid">' + rel_html + '</div></section>' if rel_html else ''}
+</div>
+<div style="height:100px"></div>
+</main>
+"""
+    write(f"produit/{pr['slug']}/index.html", head(f"{pr['name']} · {euros(price)} | {BRAND}", pr['desc'][:155], path, img=imgs[0], kind='product', extra_ld=ld) + body + footer())
+
 def seo_files():
     urls = [('/', '1.0', 'weekly'), ('/journal/', '0.8', 'weekly')]
     urls += [(f"/journal/{a['slug']}/", '0.7', 'monthly') for a in ARTICLES]
+    if PRODUCTS_DATA:
+        urls += [('/boutique/', '0.9', 'daily')] + [(f"/produit/{p['slug']}/", '0.8', 'weekly') for p in PRODUCTS_DATA]
     urls += [('/mentions-legales/', '0.2', 'yearly'), ('/confidentialite/', '0.2', 'yearly'), ('/cgv/', '0.2', 'yearly')]
     sm = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
     for u, p, c in urls:
@@ -450,5 +552,5 @@ def seo_files():
 if __name__ == '__main__':
     home(); journal()
     for a in ARTICLES: article(a)
-    legal(); seo_files()
+    shop(); legal(); seo_files()
     print('OK', FRAMES, 'images du film,', len(ARTICLES), 'articles')
