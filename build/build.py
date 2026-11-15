@@ -104,7 +104,7 @@ def footer():
       <p style="max-width:34ch;margin:18px 0 0">Lingerie élégante à prix doux. Dentelle, satin et tulle.</p>
       <div class="social" aria-label="Réseaux sociaux">{soc}</div>
     </div>
-    <div><h3>La Maison</h3><ul><li><a href="/boutique/">Boutique</a></li><li><a href="/#collection">Le dressing</a></li><li><a href="/#maison">Notre histoire</a></li><li><a href="/#rituel">Le rituel</a></li><li><a href="/#liste">Liste d'attente</a></li></ul></div>
+    <div><h3>La Maison</h3><ul><li><a href="/boutique/">Boutique</a></li><li><a href="/#collection">La galerie</a></li><li><a href="/#maison">Notre histoire</a></li><li><a href="/#rituel">Le rituel</a></li><li><a href="/#liste">Liste d'attente</a></li></ul></div>
     <div><h3>Journal</h3><ul><li><a href="/journal/">Tous les articles</a></li><li><a href="/journal/comment-choisir-sa-taille-de-soutien-gorge/">Guide des tailles</a></li><li><a href="/journal/entretenir-lingerie-en-soie/">Entretien de la soie</a></li><li><a href="/journal/offrir-de-la-lingerie-guide-cadeau/">Offrir de la lingerie</a></li></ul></div>
     <div><h3>Aide</h3><ul><li><a href="mailto:{EMAIL}">{EMAIL}</a></li><li><a href="/mentions-legales/">Mentions légales</a></li><li><a href="/confidentialite/">Confidentialité</a></li><li><a href="/cgv/">Conditions de vente</a></li></ul></div>
   </div>
@@ -217,50 +217,45 @@ def post_card(a):
   <p>{e(a['desc'])}</p>
 </a>"""
 
-# ---------- V3 : le dressing, un portant par catégorie ----------
+# ---------- V3 : la galerie, une salle par catégorie ----------
 ROOMS = [
-    ('Ensembles', 'laiton', 'Laiton doré', "Les parures assorties, brodées ou fleuries."),
+    ('Ensembles', 'laiton', 'Cadres dorés', "Les parures assorties, brodées ou fleuries."),
     ('Soutiens-gorge', 'bois', 'Bois clair', "Du triangle tout en dentelle au maintien enveloppant."),
-    ('Bralettes', 'corde', 'Corde à linge', "Sans armature, légères comme un jour d'été."),
-    ('Bodies', 'fer', 'Fer forgé', "À porter dessous, ou en haut avec un jean."),
-    ('Nuisettes', 'branche', 'Bois flotté', "Satin fluide et bordures de dentelle."),
-    ('Kimonos', 'bambou', 'Bambou', "Le geste du matin, fleuri ou uni."),
-    ('Culottes', 'macrame', 'Macramé', "Les petites pièces douces du quotidien."),
-    ('Pyjamas', 'cuivre', 'Cuivre rosé', "Pyjashorts et pyjamas chemise en satin."),
+    ('Bralettes', 'lin', 'Lin et passe-partout', "Sans armature, légères comme un jour d'été."),
+    ('Bodies', 'fer', 'Fer noir', "À porter dessous, ou en haut avec un jean."),
+    ('Nuisettes', 'sauge', 'Rotin et sauge', "Satin fluide et bordures de dentelle."),
+    ('Kimonos', 'arche', 'Arches terracotta', "Le geste du matin, fleuri ou uni."),
+    ('Culottes', 'poudre', 'Rose poudré', "Les petites pièces douces du quotidien."),
+    ('Pyjamas', 'cuivre', 'Cuivre et nuit douce', "Pyjashorts et pyjamas chemise en satin."),
 ]
-DROPS = [0, 26, 8, 30, 4, 18]
-TILTS = [-2, 1.6, -1, 2.2, -1.6, 1]
 
 def room_id(cat):
-    return 'portant-' + cat.lower().replace(' ', '-')
+    return 'salle-' + cat.lower().replace(' ', '-')
 
 def dressing_html():
     P = PRODUCTS_DATA
     rooms, chips, navl = '', '', ''
     for n, (cat, style, mat, line) in enumerate(ROOMS, 1):
-        prods = [x for x in P if x['cat'] == cat][:6]
+        prods = [x for x in P if x['cat'] == cat]
         if not prods: continue
-        total = sum(1 for x in P if x['cat'] == cat)
         items = ''
         for i, pr in enumerate(prods):
             price = euros(sell_price(pr['cost']))
-            items += f"""<li class="pc" style="--i:{i};--drop:{DROPS[i]}px;--tilt:{TILTS[i]}deg">
-  <a class="hang" href="/produit/{pr['slug']}/" aria-label="{e(pr['name'])}, {price}">
-    {HANGER}<span class="ph"><img src="{e(pr['images'][0])}" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer"></span>
-    <span class="lbl"><b>{e(pr['name'])}</b><small>{price}</small></span>
-  </a>
-</li>"""
+            items += f"""<a class="fr" style="--i:{i}" href="/produit/{pr['slug']}/" aria-label="{e(pr['name'])}, {price}">
+  <span class="ph"><img src="{e(pr['images'][0])}" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer"></span>
+  <span class="cartel"><b>{e(pr['name'])}</b><small>{price}</small></span>
+</a>"""
         rid = room_id(cat)
-        rooms += f"""<section class="room" id="{rid}" data-style="{style}" data-n="{len(prods)}" aria-labelledby="{rid}-t">
-  <div class="room-deco" aria-hidden="true"></div>
-  <div class="room-word" aria-hidden="true">{e(cat)}</div>
-  <div class="wrap room-head">
-    <div><div class="eyebrow">Portant {n:02d} · {e(mat)}</div><h2 id="{rid}-t">{e(cat)}</h2><p>{e(line)}</p></div>
-    <a class="btn" href="/boutique/#{e(cat)}">Voir les {total} pièces</a>
-  </div>
-  <div class="room-stage">
-    <div class="rail" aria-hidden="true"></div>
-    <ul class="rk" role="list">{items}</ul>
+        rooms += f"""<section class="room" id="{rid}" data-style="{style}" aria-labelledby="{rid}-t">
+  <div class="room-pin">
+    <div class="room-deco" aria-hidden="true"></div>
+    <div class="room-word" aria-hidden="true">{e(cat)}</div>
+    <div class="track">
+      <div class="panel-t"><div class="eyebrow">Salle {n:02d} · {e(mat)}</div><h2 id="{rid}-t">{e(cat)}</h2><p>{e(line)}</p><a class="btn" href="/boutique/#{e(cat)}">Voir les {len(prods)} pièces</a></div>
+      {items}
+      <a class="panel-end" href="/boutique/#{e(cat)}"><span>Toute la salle<br><em>{e(cat)}</em></span></a>
+    </div>
+    <div class="room-bar" aria-hidden="true"><b></b></div>
   </div>
 </section>
 """
@@ -269,16 +264,15 @@ def dressing_html():
     return f"""<div class="dressing" id="collection">
 <section class="dress-intro" aria-labelledby="dr-t">
   <div class="wrap">
-    <div class="eyebrow">Le dressing</div>
-    <h2 id="dr-t">Huit portants, <em>huit univers.</em></h2>
-    <p>Chaque catégorie a son portant et son décor. Faites défiler, bousculez les cintres, cliquez sur une pièce pour ouvrir sa fiche.</p>
+    <div class="eyebrow">La galerie</div>
+    <h2 id="dr-t">Huit salles, <em>huit univers.</em></h2>
+    <p>Chaque catégorie a sa salle et ses cadres. Faites défiler pour la traverser, cliquez sur un tableau pour ouvrir la fiche.</p>
     <ul class="dress-chips">{chips}</ul>
   </div>
 </section>
-<nav class="dress-nav" aria-label="Les portants"><ol>{navl}</ol></nav>
+<nav class="dress-nav" aria-label="Les salles"><ol>{navl}</ol></nav>
 {rooms}</div>
 """
-
 
 def v2img(name, fallback):
     return f'/img/v2/{name}.webp' if os.path.exists(os.path.join(ROOT, 'img', 'v2', name + '.webp')) else fallback
@@ -320,7 +314,7 @@ def home():
       <div class="eyebrow">Eve Marly · Maison de lingerie</div>
       <h1 id="h-t">La dentelle, <em>en liberté.</em></h1>
       <p class="intro">Ensembles en dentelle, bralettes, nuisettes et kimonos en satin : une lingerie douce et élégante, à prix doux.</p>
-      <div class="ctas"><a class="btn solid" href="/boutique/">Découvrir la boutique</a><a class="btn" href="#collection">Entrer dans le dressing</a></div>
+      <div class="ctas"><a class="btn solid" href="/boutique/">Découvrir la boutique</a><a class="btn" href="#collection">Entrer dans la galerie</a></div>
       <ul class="perks"><li>Livraison offerte et suivie</li><li>Colis discret</li><li>Échange de taille</li></ul>
     </div>
     <div class="collage" aria-hidden="true">
