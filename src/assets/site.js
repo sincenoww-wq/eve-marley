@@ -218,4 +218,6 @@ if(reduce){ draw(N-1); } else { requestAnimationFrame(tick); }
     bs.forEach(function(x){ x.setAttribute('aria-pressed', x===b ? 'true' : 'false'); });
     document.querySelectorAll('.shop-grid .card').forEach(function(card){ card.hidden = !(c==='all' || card.getAttribute('data-cat')===c); });
   }); });
+  var h = decodeURIComponent(location.hash.slice(1));
+  if(h) bs.forEach(function(b){ if(b.getAttribute('data-cat')===h) b.click(); });
 })();

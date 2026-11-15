@@ -19,8 +19,8 @@ SOCIAL = [('Instagram', '#', 'fa-instagram'), ('TikTok', '#', 'fa-tiktok')]
 CATS = ['Guides', 'Entretien', 'Matières', 'Savoir-faire', 'Style', 'Cadeaux', 'Féminité']
 
 LOGO = ('<a class="logo" href="/" aria-label="' + BRAND + ', accueil">'
-        '<img class="mark" src="/img/logo-mono.webp" alt="" width="271" height="546">'
-        '<span class="lockup"><img class="nom" src="/img/logo-nom.webp" alt="EVE MARLY" width="1444" height="153">'
+        '<img class="mark" src="/img/logo-mono-d.webp" alt="" width="271" height="546">'
+        '<span class="lockup"><img class="nom" src="/img/logo-nom-d.webp" alt="EVE MARLY" width="1444" height="153">'
         '<span class="sub">Maison de lingerie</span></span></a>')
 def e(s): return html.escape(s, quote=True)
 
@@ -47,7 +47,7 @@ def head(title, desc, path, img='/img/og.jpg', kind='website', extra_ld=None, pr
 <meta name="description" content="{e(desc)}">
 <link rel="canonical" href="{url}">
 <meta name="robots" content="index, follow, max-image-preview:large">
-<meta name="theme-color" content="#140d12">
+<meta name="theme-color" content="#f7f1e8">
 <meta property="og:type" content="{kind}">
 <meta property="og:site_name" content="{BRAND}">
 <meta property="og:locale" content="fr_FR">
@@ -80,10 +80,10 @@ def nav(current=''):
 <header class="nav">
   {LOGO}
   <nav aria-label="Navigation principale"><ul>
-    {a('/boutique/','Boutique','boutique') if PRODUCTS_DATA else a('/#collection','Collection','collection')}
+    {a('/boutique/','Boutique','boutique',True) if PRODUCTS_DATA else a('/#collection','Collection','collection')}
     {a('/#maison','La Maison','maison')}
     {a('/journal/','Journal','journal')}
-    {a('/#liste',"Liste d'attente",'liste',True)}
+    {a('/#liste',"Liste d'attente",'liste')}
   </ul></nav>
 </header>
 """
@@ -104,7 +104,7 @@ def footer():
       <p style="max-width:34ch;margin:18px 0 0">Lingerie élégante à prix doux. Dentelle, satin et tulle.</p>
       <div class="social" aria-label="Réseaux sociaux">{soc}</div>
     </div>
-    <div><h3>La Maison</h3><ul><li><a href="/#collection">Collection</a></li><li><a href="/#maison">Notre histoire</a></li><li><a href="/#rituel">Le rituel</a></li><li><a href="/#liste">Liste d'attente</a></li></ul></div>
+    <div><h3>La Maison</h3><ul><li><a href="/boutique/">Boutique</a></li><li><a href="/#collection">Le portant</a></li><li><a href="/#maison">Notre histoire</a></li><li><a href="/#rituel">Le rituel</a></li><li><a href="/#liste">Liste d'attente</a></li></ul></div>
     <div><h3>Journal</h3><ul><li><a href="/journal/">Tous les articles</a></li><li><a href="/journal/comment-choisir-sa-taille-de-soutien-gorge/">Guide des tailles</a></li><li><a href="/journal/entretenir-lingerie-en-soie/">Entretien de la soie</a></li><li><a href="/journal/offrir-de-la-lingerie-guide-cadeau/">Offrir de la lingerie</a></li></ul></div>
     <div><h3>Aide</h3><ul><li><a href="mailto:{EMAIL}">{EMAIL}</a></li><li><a href="/mentions-legales/">Mentions légales</a></li><li><a href="/confidentialite/">Confidentialité</a></li><li><a href="/cgv/">Conditions de vente</a></li></ul></div>
   </div>
@@ -119,7 +119,7 @@ def footer():
   </div>
   <div class="legal">
     <span>© 2026 {BRAND}. Tous droits réservés.</span>
-    <span class="love">Made with love by <b>Aladin</b> <span aria-hidden="true">♥</span></span>
+    <span class="made">Créé par <b>iAiser</b> ©</span>
   </div>
 </div>
 </footer>
@@ -217,13 +217,16 @@ def post_card(a):
   <p>{e(a['desc'])}</p>
 </a>"""
 
+def v2img(name, fallback):
+    return f'/img/v2/{name}.webp' if os.path.exists(os.path.join(ROOT, 'img', 'v2', name + '.webp')) else fallback
+
 def home():
     scenes = [
-        ('h1', 'Eve Marly', '<em>Un fil.</em> Toute une collection.', 'Lingerie élégante à prix doux. Dentelle, satin et tulle.', None),
+        ('h2', 'Le film', '<em>Un fil.</em> Toute une collection.', 'Dentelle, satin et tulle : la matière avant tout.', None),
         ('h2', 'La matière', 'Tout commence par <em>la dentelle.</em>', 'Des dentelles fines et souples, choisies pour leur toucher.', None),
         ('h2', "La sélection", 'Chaque pièce <em>compte.</em>', 'Des modèles choisis un à un, pour leur tombé et leur confort.', None),
         ('h2', 'La collection', 'Pensée <em>pour vous.</em>', 'Des pièces élégantes, à des prix qui permettent de se faire plaisir.', None),
-        ('h2', 'Le rituel', 'Le rituel <em>commence.</em>', 'Un colis discret, suivi jusqu\'à chez vous.', ('/#liste', 'Rejoindre la liste')),
+        ('h2', 'Le rituel', 'Le rituel <em>commence.</em>', 'Un colis discret, suivi jusqu\'à chez vous.', ('/boutique/', 'Voir la boutique')),
     ]
     sc = ''
     for tag, eb, t, p, cta in scenes:
@@ -231,11 +234,67 @@ def home():
         sc += f'<div class="scene"><div class="eyebrow">{eb}</div><{tag}>{t}</{tag}><p>{p}</p>{btn}</div>\n'
     dots = ''.join(f'<li><button type="button" aria-label="Aller à la scène {i+1}"><i><b></b></i></button></li>' for i in range(5))
     latest = ''.join(post_card(a) for a in ARTICLES[:3])
+    P = PRODUCTS_DATA
+    first = {}
+    for pr in P: first.setdefault(pr['cat'], pr)
+    cats = ''.join(f'<a class="cat-t rv" href="/boutique/#{e(c)}"><div class="ph"><img src="{e(first[c]["images"][0])}" alt="" loading="lazy" referrerpolicy="no-referrer"></div><span><b>{e(c)}</b><small>{sum(1 for x in P if x["cat"] == c)} pièces</small></span></a>' for c in SHOP_CATS if c in first)
+    seen, feat = set(), []
+    for pr in P[1:] + P[:1]:
+        if pr['cat'] not in seen: seen.add(pr['cat']); feat.append(pr)
+    feat_html = ''.join(product_card(x) for x in feat[:8])
+    pimg = lambda k: P[k]['images'][0] if len(P) > k else '/img/atelier.webp'
+    a_img = v2img('fenetre-p', pimg(0)); b_img = v2img('flatlay', pimg(1)); c_img = v2img('detail-sq', pimg(2))
+    m1 = v2img('fenetre', '/img/atelier.webp'); m2 = v2img('kimono', pimg(30)); m3 = v2img('nuisette', pimg(26))
+    words = ['Dentelle', 'Satin', 'Tulle', 'Livraison offerte', 'Colis discret', 'Échange de taille', 'Prix doux']
+    mq = ''.join(f'{w}<span>✦</span>' for w in words) * 2
     ld = [{"@context": "https://schema.org", "@type": "WebSite", "name": BRAND, "url": SITE + "/", "inLanguage": "fr-FR"}]
-    pre = '<link rel="preload" as="image" href="/film/d/001.webp" media="(min-width:760px)">\n<link rel="preload" as="image" href="/film/m/001.webp" media="(max-width:759px)">\n'
     body = f"""<body>
 {nav()}
 <main id="contenu">
+<section class="hero2" aria-labelledby="h-t">
+  <div class="wrap">
+    <div>
+      <div class="eyebrow">Eve Marly · Maison de lingerie</div>
+      <h1 id="h-t">La dentelle, <em>en liberté.</em></h1>
+      <p class="intro">Ensembles en dentelle, bralettes, nuisettes et kimonos en satin : une lingerie douce et élégante, à prix doux.</p>
+      <div class="ctas"><a class="btn solid" href="/boutique/">Découvrir la boutique</a><a class="btn" href="/boutique/#Nuisettes">Les nuisettes</a></div>
+      <ul class="perks"><li>Livraison offerte et suivie</li><li>Colis discret</li><li>Échange de taille</li></ul>
+    </div>
+    <div class="collage" aria-hidden="true">
+      <img class="a" src="{a_img}" alt="" width="650" height="813">
+      <img class="b" src="{b_img}" alt="" loading="lazy" referrerpolicy="no-referrer">
+      <img class="c" src="{c_img}" alt="" loading="lazy" referrerpolicy="no-referrer">
+      <div class="stamp">Nouvelle<br>collection</div>
+    </div>
+  </div>
+</section>
+<div class="marquee" aria-hidden="true"><div>{mq}</div></div>
+
+<section class="sec" aria-labelledby="cat-t" style="padding-bottom:40px">
+  <div class="wrap">
+    <div class="coll-head"><div><div class="eyebrow">Les univers</div><h2 id="cat-t">Choisir <em>son essentiel</em></h2></div><a class="btn" href="/boutique/">Toute la boutique</a></div>
+    <div class="cats">{cats}</div>
+  </div>
+</section>
+
+<section class="sec" id="nouveautes" aria-labelledby="nv-t">
+  <div class="wrap">
+    <div class="coll-head"><div><div class="eyebrow">La sélection</div><h2 id="nv-t">Nos pièces <em>préférées</em></h2></div><p class="note">Livraison offerte · 7 à 15 jours ouvrés</p></div>
+    <div class="grid g4">{feat_html}</div>
+  </div>
+</section>
+
+<section class="sec" id="maison" aria-labelledby="maison-t" style="padding-top:20px">
+  <div class="wrap mood">
+    <img class="m1 rv" src="{m1}" alt="Une femme en kimono fleuri devant une fenêtre baignée de lumière" loading="lazy">
+    <div class="txt rv"><div class="eyebrow" id="maison-t">La Maison</div><h2>Choisie d'abord <em>pour soi.</em></h2><p style="margin:0;color:var(--ivoire-dim)">Eve Marly est née d'une idée simple : se faire plaisir souvent, sans se ruiner. Nous sélectionnons des pièces élégantes et confortables, aux matières douces et aux couleurs de saison.</p><a class="btn" href="/boutique/" style="justify-self:start">Voir la sélection</a></div>
+    <img class="m2 rv" src="{m2}" alt="" loading="lazy" referrerpolicy="no-referrer">
+    <img class="m3 rv" src="{m3}" alt="" loading="lazy" referrerpolicy="no-referrer">
+  </div>
+</section>
+
+{rack_html()}
+
 <section class="film" data-frames="{FRAMES}" data-d="/film/d/" data-m="/film/m/" aria-label="Le film Eve Marly">
   <div class="film-stage">
     <canvas aria-hidden="true"></canvas>
@@ -245,18 +304,9 @@ def home():
   </div>
 </section>
 
-<section class="sec" id="maison" aria-labelledby="maison-t">
-  <div class="wrap two">
-    <div class="eyebrow" id="maison-t">La Maison</div>
-    <p class="lead rv">Eve Marly est née d'une idée simple : la lingerie se choisit d'abord <em>pour soi.</em> Nous choisissons des pièces élégantes et confortables, à des prix qui permettent de se faire plaisir souvent.</p>
-  </div>
-</section>
-
-{rack_html()}
-
 <section class="sec" aria-labelledby="mat-t">
   <div class="wrap split">
-    <img class="rv" src="/img/dentelle.webp" alt="Dentelle noire traversée d'un fil d'or" loading="lazy" width="1100" height="614">
+    <img class="rv" src="{v2img('detail', '/img/dentelle.webp')}" alt="Détail de dentelle ivoire et fleurs séchées" loading="lazy">
     <div>
       <div class="eyebrow">Les matières</div>
       <h2 id="mat-t">Trois matières, choisies <em>pour la peau.</em></h2>
@@ -295,9 +345,9 @@ def home():
 {waitlist()}
 </main>
 """
-    write('index.html', head(f'{BRAND} · Lingerie élégante, dentelle et satin',
-        'Eve Marly, lingerie élégante à prix doux : ensembles en dentelle, bodies, nuisettes et kimonos en satin. Livraison suivie et discrète.',
-        '/', extra_ld=ld, preload=pre) + body + footer())
+    write('index.html', head(f'{BRAND} · Lingerie bohème en dentelle et satin, à prix doux',
+        'Eve Marly, lingerie élégante à prix doux : ensembles en dentelle, bralettes, bodies, nuisettes et kimonos en satin. Livraison offerte, suivie et discrète.',
+        '/', extra_ld=ld, preload=f'<link rel="preload" as="image" href="{a_img}">\n') + body + footer())
 
 def journal():
     filt = '<button type="button" data-cat="all" aria-pressed="true">Tous</button>' + ''.join(
@@ -399,7 +449,7 @@ def legal():
 <h2>Propriété intellectuelle</h2>
 <p>L'ensemble des contenus de ce site (textes, images, vidéos, logo, charte graphique) est la propriété d'{BRAND}, sauf mention contraire. Toute reproduction, même partielle, sans autorisation écrite préalable est interdite.</p>
 <h2>Conception</h2>
-<p>Site conçu et réalisé par Aladin.</p>
+<p>Site conçu et réalisé par iAiser.</p>
 """)
     simple('/confidentialite/', f'Politique de confidentialité | {BRAND}', f'Comment {BRAND} collecte, utilise et protège vos données personnelles.', 'Politique de confidentialité', f"""
 <p>La présente politique explique quelles données personnelles {BRAND} collecte sur evemarly.com, pourquoi, et quels sont vos droits, conformément au Règlement général sur la protection des données (RGPD).</p>
@@ -442,7 +492,7 @@ def legal():
 # ---------- Boutique ----------
 import math
 PRODUCTS_DATA = json.load(open(os.path.join(os.path.dirname(__file__), 'products.json'), encoding='utf-8'))
-SHOP_CATS = ['Ensembles', 'Soutiens-gorge', 'Bodies', 'Nuisettes', 'Kimonos', 'Culottes', 'Pyjamas']
+SHOP_CATS = ['Ensembles', 'Soutiens-gorge', 'Bralettes', 'Bodies', 'Nuisettes', 'Kimonos', 'Culottes', 'Pyjamas']
 COEF = 2.5
 
 def sell_price(cost):
