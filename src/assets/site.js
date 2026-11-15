@@ -124,77 +124,82 @@ if(reduce){ draw(N-1); } else { requestAnimationFrame(tick); }
 
 /* Le portant : balancement en pendule amorti */
 (function(){
-  var sec = document.querySelector('.rack-sec'); if(!sec) return;
+  var rooms = Array.prototype.slice.call(document.querySelectorAll('.room')); if(!rooms.length) return;
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var data = JSON.parse(document.getElementById('rack-data').textContent);
-  var swings = Array.prototype.slice.call(sec.querySelectorAll('.swing'));
-  var Y0 = window.innerWidth < 980 ? -10 : -24;
-  var st = swings.map(function(el, i){ return {el:el, a:0, v:0, yaw:Y0, yawT:Y0, ph:i*1.7, hover:false}; });
-  var lastX = null, lastT = 0, visible = false;
-  function kick(i, f){ if(st[i]) st[i].v += f * 14; }
-  sec.addEventListener('pointermove', function(e){
-    var now = performance.now();
-    if(lastX !== null && e.pointerType !== 'touch'){
-      var vx = (e.clientX - lastX) / Math.max(8, now - lastT);
-      swings.forEach(function(el, i){
-        var r = el.getBoundingClientRect();
-        if(e.clientX > r.left && e.clientX < r.right && e.clientY > r.top && e.clientY < r.bottom){ kick(i, vx * 0.9); }
-      });
-    }
-    lastX = e.clientX; lastT = now;
+  var Y0 = window.innerWidth < 980 ? -8 : -16;
+  var st = [], R = [];
+  function kick(s, f){ if(s) s.v += f * 14; }
+  rooms.forEach(function(room){
+    var r = {el:room, vis:false, word:room.querySelector('.room-word'), list:[], lastX:null, lastT:0};
+    R.push(r);
+    if(!reduce) room.classList.add('anim');
+    Array.prototype.forEach.call(room.querySelectorAll('.hang'), function(el, i){
+      var s = {el:el, a:0, v:0, yaw:Y0, yawT:Y0, ph:i*1.7 + R.length, r:r};
+      r.list.push(s); st.push(s);
+      el.addEventListener('pointerenter', function(){ s.yawT = 0; kick(r.list[i-1], .25); kick(r.list[i+1], -.25); });
+      el.addEventListener('pointerleave', function(){ s.yawT = Y0; });
+      el.addEventListener('touchstart', function(){ kick(s, 1.2); }, {passive:true});
+      el.addEventListener('focus', function(){ s.yawT = 0; });
+      el.addEventListener('blur', function(){ s.yawT = Y0; });
+    });
+    room.addEventListener('pointermove', function(e){
+      var now = performance.now();
+      if(r.lastX !== null && e.pointerType !== 'touch'){
+        var vx = (e.clientX - r.lastX) / Math.max(8, now - r.lastT);
+        r.list.forEach(function(s){
+          var b = s.el.getBoundingClientRect();
+          if(e.clientX > b.left && e.clientX < b.right && e.clientY > b.top && e.clientY < b.bottom) kick(s, vx * 0.9);
+        });
+      }
+      r.lastX = e.clientX; r.lastT = now;
+    });
+    room.addEventListener('pointerleave', function(){ r.lastX = null; });
   });
-  sec.addEventListener('pointerleave', function(){ lastX = null; });
-  swings.forEach(function(el, i){
-    el.addEventListener('pointerenter', function(){ st[i].hover = true; st[i].yawT = 0; kick(i-1, .25); kick(i+1, -.25); });
-    el.addEventListener('pointerleave', function(){ st[i].hover = false; st[i].yawT = Y0; });
-    el.addEventListener('touchstart', function(){ kick(i, 1.2); }, {passive:true});
-    el.addEventListener('focus', function(){ st[i].yawT = 0; });
-    el.addEventListener('blur', function(){ st[i].yawT = Y0; });
-    el.addEventListener('click', function(){ open(i); });
-  });
+  var nav = document.querySelector('.dress-nav'), links = nav ? nav.querySelectorAll('a') : [];
   if('IntersectionObserver' in window){
-    new IntersectionObserver(function(es){ visible = es[0].isIntersecting; }, {rootMargin:'100px'}).observe(sec);
-  } else { visible = true; }
+    var io = new IntersectionObserver(function(es){ es.forEach(function(en){
+      var k = rooms.indexOf(en.target), r = R[k]; r.vis = en.isIntersecting;
+      if(en.isIntersecting && !en.target.classList.contains('in')){
+        en.target.classList.add('in');
+        r.list.forEach(function(s, i){ setTimeout(function(){ kick(s, -2.6); }, 250 + i*90); });
+      }
+    }); }, {rootMargin:'0px 0px -18% 0px'});
+    rooms.forEach(function(x){ io.observe(x); });
+    var io2 = new IntersectionObserver(function(es){ es.forEach(function(en){
+      if(en.isIntersecting){ var k = rooms.indexOf(en.target); Array.prototype.forEach.call(links, function(l, i){ if(i===k) l.setAttribute('aria-current','true'); else l.removeAttribute('aria-current'); }); }
+    }); }, {rootMargin:'-45% 0px -45% 0px'});
+    rooms.forEach(function(x){ io2.observe(x); });
+    var dr = document.querySelector('.dressing');
+    if(nav && dr) new IntersectionObserver(function(es){ nav.classList.toggle('on', es[0].isIntersecting); }, {rootMargin:'-30% 0px -30% 0px'}).observe(dr);
+  } else { rooms.forEach(function(x, k){ x.classList.add('in'); R[k].vis = true; }); }
+  var ly = window.scrollY;
+  window.addEventListener('scroll', function(){
+    var d = Math.max(-80, Math.min(80, window.scrollY - ly)); ly = window.scrollY;
+    if(reduce) return;
+    for(var i=0;i<st.length;i++){ if(st[i].r.vis) st[i].v += d * (0.5 + (i%3)*0.22); }
+  }, {passive:true});
   var prev = performance.now();
   function tick(now){
     var dt = Math.min(0.05, (now - prev) / 1000); prev = now;
-    if(visible){
-      for(var i=0;i<st.length;i++){
-        var s = st[i];
+    for(var q=0;q<R.length;q++){
+      var r = R[q]; if(!r.vis) continue;
+      if(r.word && !reduce){ var bb = r.el.getBoundingClientRect(); r.word.style.transform = 'translate3d(' + (bb.top / window.innerHeight * 9).toFixed(2) + '%,0,0)'; }
+      for(var i=0;i<r.list.length;i++){
+        var s = r.list[i];
         var idle = reduce ? 0 : Math.sin(now/1000*0.9 + s.ph) * 0.9;
         for(var k=0, n=Math.ceil(dt*240); k<n; k++){
           var h = dt / n;
           s.v += (-60 * (s.a - idle) - 6 * s.v) * h;
           s.a += s.v * h;
         }
-        s.a = Math.max(-28, Math.min(28, s.a));
+        s.a = Math.max(-26, Math.min(26, s.a));
         s.yaw += (s.yawT - s.yaw) * Math.min(1, dt * 6);
-        var a = reduce ? 0 : s.a, y = reduce ? 0 : s.yaw;
-        s.el.style.transform = 'rotateZ(' + a.toFixed(2) + 'deg) rotateY(' + y.toFixed(2) + 'deg)';
+        s.el.style.transform = reduce ? '' : 'rotateZ(' + s.a.toFixed(2) + 'deg) rotateY(' + s.yaw.toFixed(2) + 'deg)';
       }
     }
     requestAnimationFrame(tick);
   }
   requestAnimationFrame(tick);
-
-  var dlg = sec.querySelector('.piece-dlg'), last = null;
-  function open(i){
-    var d = data[i]; last = swings[i];
-    var img = dlg.querySelector('.dlg-img img');
-    img.src = '/img/rack/' + d.k + '.webp'; img.alt = d.n + ', visuel provisoire';
-    img.width = d.w; img.height = d.h;
-    img.style.animation = 'none'; void img.offsetWidth; img.style.animation = '';
-    dlg.querySelector('#dlg-n').textContent = d.n;
-    dlg.querySelector('#dlg-m').textContent = d.m;
-    dlg.querySelector('.dlg-p').textContent = d.p;
-    dlg.querySelector('.dlg-d').textContent = d.d;
-    if(dlg.showModal) dlg.showModal(); else dlg.setAttribute('open','');
-    kick(i, 2.5);
-  }
-  function close(){ if(dlg.open){ dlg.close ? dlg.close() : dlg.removeAttribute('open'); } }
-  dlg.addEventListener('close', function(){ if(last) last.focus(); });
-  dlg.querySelectorAll('[data-close]').forEach(function(b){ b.addEventListener('click', close); });
-  dlg.addEventListener('click', function(e){ if(e.target === dlg) close(); });
 })();
 
 /* Fiche produit : galerie */
