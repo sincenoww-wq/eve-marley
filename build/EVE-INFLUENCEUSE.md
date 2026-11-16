@@ -25,3 +25,15 @@ Reprendre la discussion Gemini « Portrait Éditorial Parisien » et commencer c
 3. Robe de nuit champagne à la fenêtre — « Le soir, tout ralentit. » Publicité · #ImagesVirtuelles
 4. Gros plan dentelle (sans Ève) — « Avant la pièce, la matière. »
 5. Table d'atelier (sans Ève) — « Un croquis, un fil, une idée. »
+
+# Inès — deuxième égérie virtuelle
+
+- Prénom : Inès. Âge : 30 ans. Méditerranéenne.
+- Physique (à répéter mot pour mot) : peau mate dorée, longs cheveux bruns ondulés détachés, yeux marron foncé, sourcils dessinés, fines taches de rousseur sur le nez.
+- Ton : assuré, chaleureux, plus direct qu'Ève. Elle parle de confiance en soi et de soirées.
+- Décor récurrent : boudoir aux murs bordeaux, moulures dorées, appliques en laiton, velours.
+- Rôle : Ève porte les matins et le satin clair ; Inès porte les soirs, la dentelle rouge et noire.
+- Discussion Gemini à reprendre : « Portrait éditorial d'Inès ». Début de chaque demande :
+  « Nouvelle photo de la même femme adulte, Inès, 30 ans, exactement le même visage (mêmes taches de rousseur, mêmes longs cheveux bruns ondulés)… »
+- Mêmes règles que pour Ève : mention « Images virtuelles » sur chaque image, « Publicité » dès qu'un produit est mis en avant.
+- Bio Instagram : Inès · égérie virtuelle d'Eve Marly (personnage créé par IA) · Dentelle, soirs et confiance · evemarly.com
