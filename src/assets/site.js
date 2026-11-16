@@ -179,7 +179,7 @@ if(reduce){ draw(N-1); } else { requestAnimationFrame(tick); }
       if(r.bar) r.bar.style.transform = 'scaleX(' + r.sp.toFixed(3) + ')';
       if(r.lay === 'gal'){
         if(mq.matches && !reduce){
-          var x = r.sp * r.extra, sk = Math.max(-5, Math.min(5, vel * 0.12));
+          var x = r.sp * r.extra, sk = 0;
           r.track.style.transform = 'translate3d(' + (-x).toFixed(1) + 'px,0,0) skewX(' + (-sk).toFixed(2) + 'deg)';
           if(r.word) r.word.style.transform = 'translate3d(' + (-x * 0.25).toFixed(1) + 'px,0,0)';
         }
@@ -270,7 +270,7 @@ if(reduce){ draw(N-1); } else { requestAnimationFrame(tick); }
       var ph = c.querySelector('.ph'); if(!ph) return;
       c.addEventListener('pointermove', function(e){
         var r = ph.getBoundingClientRect(), x = (e.clientX - r.left) / r.width - .5, y = (e.clientY - r.top) / r.height - .5;
-        ph.style.transform = 'perspective(700px) rotateY(' + (x * 14).toFixed(2) + 'deg) rotateX(' + (-y * 12).toFixed(2) + 'deg) translateY(-8px) scale(1.03)';
+        ph.style.transform = 'perspective(700px) rotateY(' + (x * 6).toFixed(2) + 'deg) rotateX(' + (-y * 5).toFixed(2) + 'deg) translateY(-6px)';
       });
       c.addEventListener('pointerleave', function(){ ph.style.transform = ''; });
     });
@@ -293,7 +293,7 @@ if(reduce){ draw(N-1); } else { requestAnimationFrame(tick); }
     vel += ((sy - ly) - vel) * 0.15; ly = sy;
     if(cur){ px += (cx - px) * 0.22; py += (cy - py) * 0.22; cur.style.transform = 'translate3d(' + px.toFixed(1) + 'px,' + py.toFixed(1) + 'px,0)'; }
     if(!reduce){
-      Array.prototype.forEach.call(mqs, function(m){ var a = m.getAnimations ? m.getAnimations()[0] : null; if(a) a.playbackRate = 1 + Math.min(9, Math.abs(vel) * 0.25); m.style.transform; m.parentNode.style.setProperty('--sk', Math.max(-12, Math.min(12, vel * 0.3)).toFixed(2) + 'deg'); });
+      Array.prototype.forEach.call(mqs, function(m){ var a = m.getAnimations ? m.getAnimations()[0] : null; if(a) a.playbackRate = 1 + Math.min(3, Math.abs(vel) * 0.08); });
       var vh = window.innerHeight;
       for(var i=0;i<par.length;i++){ var b = par[i].getBoundingClientRect(); if(b.bottom < 0 || b.top > vh) continue; par[i].style.setProperty('--py', (((b.top + b.height/2) / vh - .5) * -34).toFixed(1) + 'px'); }
     }

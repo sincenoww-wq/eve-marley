@@ -19,8 +19,8 @@ SOCIAL = [('Instagram', '#', 'fa-instagram'), ('TikTok', '#', 'fa-tiktok')]
 CATS = ['Guides', 'Entretien', 'Matières', 'Savoir-faire', 'Style', 'Cadeaux', 'Féminité']
 
 LOGO = ('<a class="logo" href="/" aria-label="' + BRAND + ', accueil">'
-        '<img class="mark" src="/img/logo-mono-d.webp" alt="" width="271" height="546">'
-        '<span class="lockup"><img class="nom" src="/img/logo-nom-d.webp" alt="EVE MARLY" width="1444" height="153">'
+        '<img class="mark" src="/img/logo-mono.webp" alt="" width="271" height="546">'
+        '<span class="lockup"><img class="nom" src="/img/logo-nom.webp" alt="EVE MARLY" width="1444" height="153">'
         '<span class="sub">Maison de lingerie</span></span></a>')
 def e(s): return html.escape(s, quote=True)
 
@@ -47,7 +47,7 @@ def head(title, desc, path, img='/img/og.jpg', kind='website', extra_ld=None, pr
 <meta name="description" content="{e(desc)}">
 <link rel="canonical" href="{url}">
 <meta name="robots" content="index, follow, max-image-preview:large">
-<meta name="theme-color" content="#f7f1e8">
+<meta name="theme-color" content="#0b0608">
 <meta property="og:type" content="{kind}">
 <meta property="og:site_name" content="{BRAND}">
 <meta property="og:locale" content="fr_FR">
@@ -101,7 +101,7 @@ def footer():
   <div class="f-grid">
     <div>
       {LOGO}
-      <p style="max-width:34ch;margin:18px 0 0">Lingerie élégante à prix doux. Dentelle, satin et tulle.</p>
+      <p style="max-width:34ch;margin:18px 0 0">Lingerie de séduction. Dentelle, satin et transparences.</p>
       <div class="social" aria-label="Réseaux sociaux">{soc}</div>
     </div>
     <div><h3>La Maison</h3><ul><li><a href="/boutique/">Boutique</a></li><li><a href="/#collection">La galerie</a></li><li><a href="/#maison">Notre histoire</a></li><li><a href="/#rituel">Le rituel</a></li><li><a href="/#liste">Liste d'attente</a></li></ul></div>
@@ -219,22 +219,22 @@ def post_card(a):
 
 # ---------- V3 : la galerie, une salle par catégorie ----------
 ROOMS = [
-    ('Ensembles', 'laiton', 'Cadres dorés', "Les parures assorties, brodées ou fleuries."),
-    ('Soutiens-gorge', 'bois', 'Bois clair', "Du triangle tout en dentelle au maintien enveloppant."),
-    ('Bralettes', 'lin', 'Lin et passe-partout', "Sans armature, légères comme un jour d'été."),
-    ('Bodies', 'fer', 'Fer noir', "À porter dessous, ou en haut avec un jean."),
-    ('Nuisettes', 'sauge', 'Rotin et sauge', "Satin fluide et bordures de dentelle."),
-    ('Kimonos', 'arche', 'Arches terracotta', "Le geste du matin, fleuri ou uni."),
-    ('Culottes', 'poudre', 'Rose poudré', "Les petites pièces douces du quotidien."),
-    ('Pyjamas', 'cuivre', 'Cuivre et nuit douce', "Pyjashorts et pyjamas chemise en satin."),
+    ('Porte-jarretelles', 'velours', 'Rouge profond', "Parures coordonnées, jarretelles et transparences."),
+    ('Ensembles', 'laiton', 'Ivoire', "Soutien-gorge et string assortis, dentelle et broderies."),
+    ('Soutiens-gorge', 'bois', 'Rose poudré', "Balconnets, triangles et emboîtants en dentelle."),
+    ('Bodies', 'fer', 'Noir', "Dentelle fine, à porter dessous ou le soir sous une veste."),
+    ('Nuisettes', 'sauge', 'Champagne', "Satin fluide, robes de nuit et bordures de dentelle."),
+    ('Kimonos', 'arche', 'Bordeaux', "Satin, à nouer ou à laisser glisser."),
+    ('Culottes', 'poudre', 'Nude', "Strings et culottes en dentelle."),
+    ('Pyjamas', 'cuivre', 'Prune', "Pyjashorts en satin et dentelle."),
 ]
 
 def room_id(cat):
     return 'salle-' + cat.lower().replace(' ', '-')
 
-LAYOUTS = {'Ensembles': 'gal', 'Soutiens-gorge': 'fan', 'Bralettes': 'cols', 'Bodies': 'ring',
-           'Nuisettes': 'gal', 'Kimonos': 'fan', 'Culottes': 'ring', 'Pyjamas': 'cols'}
-HINTS = {'gal': 'Défilez : la salle se traverse', 'fan': 'Défilez : les cartes se déploient', 'cols': 'Défilez : les colonnes se croisent', 'ring': 'Défilez : le carrousel tourne'}
+LAYOUTS = {'Porte-jarretelles': 'fan', 'Ensembles': 'gal', 'Soutiens-gorge': 'cols', 'Bodies': 'mos',
+           'Nuisettes': 'gal', 'Kimonos': 'fan', 'Culottes': 'mos', 'Pyjamas': 'mos'}
+HINTS = {'mos': 'Survolez les pièces', 'gal': 'Défilez : la salle se traverse', 'fan': 'Défilez : les cartes se déploient', 'cols': 'Défilez : les colonnes se croisent', 'ring': 'Défilez : le carrousel tourne'}
 
 def frame(pr, i, extra=''):
     price = euros(sell_price(pr['cost']))
@@ -251,11 +251,11 @@ def dressing_html():
         if not prods: continue
         lay = LAYOUTS[cat]
         rid = room_id(cat)
-        head = f'<div class="panel-t"><div class="eyebrow">Salle {n:02d} · {e(mat)}</div><h2 id="{rid}-t">{e(cat)}</h2><p>{e(line)}</p><a class="btn" href="/boutique/#{e(cat)}">Voir les {len(prods)} pièces</a><span class="hint" aria-hidden="true">{HINTS[lay]}</span></div>'
+        head = f'<div class="panel-t"><div class="eyebrow">Salon {n:02d} · {e(mat)}</div><h2 id="{rid}-t">{e(cat)}</h2><p>{e(line)}</p><a class="btn" href="/boutique/#{e(cat)}">Voir les {len(prods)} pièces</a><span class="hint" aria-hidden="true">{HINTS[lay]}</span></div>'
         if lay == 'gal':
             inner = f"""<div class="track">{head}
       {''.join(frame(pr, i) for i, pr in enumerate(prods))}
-      <a class="panel-end" href="/boutique/#{e(cat)}"><span>Toute la salle<br><em>{e(cat)}</em></span></a>
+      <a class="panel-end" href="/boutique/#{e(cat)}"><span>Tout le salon<br><em>{e(cat)}</em></span></a>
     </div>
     <div class="room-bar" aria-hidden="true"><b></b></div>"""
         elif lay == 'fan':
@@ -270,6 +270,8 @@ def dressing_html():
             inner = f"""<div class="wrap stage-head">{head}</div>
     <div class="ring-scene"><div class="ring" data-n="{len(lst)}">{items}</div></div>
     <div class="room-bar" aria-hidden="true"><b></b></div>"""
+        elif lay == 'mos':
+            inner = f"""<div class="wrap mos-wrap">{head}<div class="mos">{''.join(frame(pr, i) for i, pr in enumerate(prods))}</div></div>"""
         else:
             cols = [[], [], []]
             for i, pr in enumerate(prods): cols[i % 3].append(frame(pr, i))
@@ -287,9 +289,9 @@ def dressing_html():
     return f"""<div class="dressing" id="collection">
 <section class="dress-intro" aria-labelledby="dr-t">
   <div class="wrap">
-    <div class="eyebrow">La galerie</div>
-    <h2 id="dr-t">Huit salles, <em>huit univers.</em></h2>
-    <p>Une salle par catégorie, et jamais deux fois de suite la même mise en scène. Faites défiler, cliquez sur une pièce pour ouvrir sa fiche.</p>
+    <div class="eyebrow">Les collections</div>
+    <h2 id="dr-t">Les collections, <em>salon par salon.</em></h2>
+    <p>Un salon par collection, chacun sa mise en scène. Faites défiler, cliquez sur une pièce pour ouvrir sa fiche.</p>
     <ul class="dress-chips">{chips}</ul>
   </div>
 </section>
@@ -302,11 +304,11 @@ def v2img(name, fallback):
 
 def home():
     scenes = [
-        ('h2', 'Le film', '<em>Un fil.</em> Toute une collection.', 'Dentelle, satin et tulle : la matière avant tout.', None),
-        ('h2', 'La matière', 'Tout commence par <em>la dentelle.</em>', 'Des dentelles fines et souples, choisies pour leur toucher.', None),
-        ('h2', "La sélection", 'Chaque pièce <em>compte.</em>', 'Des modèles choisis un à un, pour leur tombé et leur confort.', None),
-        ('h2', 'La collection', 'Pensée <em>pour vous.</em>', 'Des pièces élégantes, à des prix qui permettent de se faire plaisir.', None),
-        ('h2', 'Le rituel', 'Le rituel <em>commence.</em>', 'Un colis discret, suivi jusqu\'à chez vous.', ('/boutique/', 'Voir la boutique')),
+        ('h2', 'Eve Marly · Maison de lingerie', 'Tout commence <em>par un fil.</em>', "L'esprit des ateliers de couture parisiens, en cinq tableaux.", None),
+        ('h2', 'La matière', 'Puis vient <em>la dentelle.</em>', 'Fine, souple, presque impalpable.', None),
+        ('h2', 'Le dessin', 'Une ligne, <em>un geste.</em>', 'Le croquis fixe la coupe ; la main la précise.', None),
+        ('h2', 'La pièce', 'La création <em>prend corps.</em>', 'Dentelle, satin, transparences : chaque détail compte.', None),
+        ('h2', 'La collection', 'À vous <em>de la porter.</em>', 'Parures, bodies, nuisettes et kimonos vous attendent.', ('#collection', 'Découvrir la collection')),
     ]
     sc = ''
     for tag, eb, t, p, cta in scenes:
@@ -325,28 +327,37 @@ def home():
     pimg = lambda k: P[k]['images'][0] if len(P) > k else '/img/atelier.webp'
     a_img = v2img('fenetre-p', pimg(0)); b_img = v2img('flatlay', pimg(1)); c_img = v2img('detail-sq', pimg(2))
     m1 = v2img('fenetre', '/img/atelier.webp'); m2 = v2img('kimono', pimg(30)); m3 = v2img('nuisette', pimg(26))
-    words = ['Dentelle', 'Satin', 'Tulle', 'Livraison offerte', 'Colis discret', 'Échange de taille', 'Prix doux']
+    words = ['Dentelle', 'Satin', 'Transparences', 'Porte-jarretelles', 'Kimonos', 'Livraison offerte', 'Colis discret']
     mq = ''.join(f'{w}<span>✦</span>' for w in words) * 2
     ld = [{"@context": "https://schema.org", "@type": "WebSite", "name": BRAND, "url": SITE + "/", "inLanguage": "fr-FR"}]
     body = f"""<body>
 {nav()}
 <main id="contenu">
-<div class="splash" aria-hidden="true"><img src="/img/logo-mono-d.webp" alt="" width="271" height="546"><span>Eve Marly</span></div>
-<section class="hero2" aria-labelledby="h-t">
-  <div class="petals" aria-hidden="true"><i style="--x:0%;--d:9s;--w:0.0s;--s:0.60"></i><i style="--x:37%;--d:14s;--w:10.3s;--s:0.82"></i><i style="--x:74%;--d:10s;--w:8.6s;--s:1.04"></i><i style="--x:11%;--d:15s;--w:6.9s;--s:1.26"></i><i style="--x:48%;--d:11s;--w:5.2s;--s:0.60"></i><i style="--x:85%;--d:16s;--w:3.5s;--s:0.82"></i><i style="--x:22%;--d:12s;--w:1.8s;--s:1.04"></i><i style="--x:59%;--d:17s;--w:0.1s;--s:1.26"></i><i style="--x:96%;--d:13s;--w:10.4s;--s:0.60"></i><i style="--x:33%;--d:9s;--w:8.7s;--s:0.82"></i><i style="--x:70%;--d:14s;--w:7.0s;--s:1.04"></i><i style="--x:7%;--d:10s;--w:5.3s;--s:1.26"></i><i style="--x:44%;--d:15s;--w:3.6s;--s:0.60"></i><i style="--x:81%;--d:11s;--w:1.9s;--s:0.82"></i><i style="--x:18%;--d:16s;--w:0.2s;--s:1.04"></i><i style="--x:55%;--d:12s;--w:10.5s;--s:1.26"></i></div>
+<div class="splash" aria-hidden="true"><img src="/img/logo-mono.webp" alt="" width="271" height="546"><span>Eve Marly</span></div>
+<section class="film" data-frames="{FRAMES}" data-d="/film/d/" data-m="/film/m/" aria-label="Le film Eve Marly">
+  <div class="film-stage">
+    <canvas aria-hidden="true"></canvas>
+    <div class="loader" aria-hidden="true"></div>
+    {sc}
+    <a class="film-skip" href="#maison-intro">Passer l’introduction</a>
+    <div class="film-ui"><ol class="dots">{dots}</ol><span class="film-hint" aria-hidden="true">Faites défiler</span></div>
+  </div>
+</section>
+
+<section class="hero2" id="maison-intro" aria-labelledby="h-t">
   <div class="wrap">
     <div>
       <div class="eyebrow">Eve Marly · Maison de lingerie</div>
-      <h1 id="h-t">La dentelle, <em>en liberté.</em></h1>
-      <p class="intro">Ensembles en dentelle, bralettes, nuisettes et kimonos en satin : une lingerie douce et élégante, à prix doux.</p>
-      <div class="ctas"><a class="btn solid" href="/boutique/">Découvrir la boutique</a><a class="btn" href="#collection">Entrer dans la galerie</a></div>
+      <h1 id="h-t">L’élégance <em>à fleur de peau.</em></h1>
+      <p class="intro">Parures en dentelle, porte-jarretelles, bodies et kimonos de satin : une collection choisie pièce à pièce, dans l’esprit des maisons de couture parisiennes.</p>
+      <div class="ctas"><a class="btn solid" href="/boutique/">Découvrir la boutique</a><a class="btn" href="#collection">Entrer dans les salons</a><a class="btn ghost" href="/journal/offrir-de-la-lingerie-guide-cadeau/">Offrir</a></div>
       <ul class="perks"><li>Livraison offerte et suivie</li><li>Colis discret</li><li>Échange de taille</li></ul>
     </div>
     <div class="collage" aria-hidden="true">
       <img class="a" src="{a_img}" alt="" width="650" height="813">
       <img class="b" src="{b_img}" alt="" loading="lazy" referrerpolicy="no-referrer">
       <img class="c" src="{c_img}" alt="" loading="lazy" referrerpolicy="no-referrer">
-      <div class="stamp">Nouvelle<br>collection</div>
+      <div class="stamp">La<br>collection</div>
     </div>
   </div>
 </section>
@@ -355,25 +366,17 @@ def home():
 {dressing_html()}
 <section class="sec" id="maison" aria-labelledby="maison-t" style="padding-top:20px">
   <div class="wrap mood">
-    <img class="m1 rv" src="{m1}" alt="Une femme en kimono fleuri devant une fenêtre baignée de lumière" loading="lazy">
-    <div class="txt rv"><div class="eyebrow" id="maison-t">La Maison</div><h2>Choisie d'abord <em>pour soi.</em></h2><p style="margin:0;color:var(--ivoire-dim)">Eve Marly est née d'une idée simple : se faire plaisir souvent, sans se ruiner. Nous sélectionnons des pièces élégantes et confortables, aux matières douces et aux couleurs de saison.</p><a class="btn" href="/boutique/" style="justify-self:start">Voir la sélection</a></div>
+    <img class="m1 rv" src="{m1}" alt="Une femme en kimono de satin bordeaux dans un boudoir" loading="lazy">
+    <div class="txt rv"><div class="eyebrow" id="maison-t">La Maison</div><h2>Le goût <em>du détail.</em></h2><p style="margin:0;color:var(--ivoire-dim)">Eve Marly s’inspire de l’élégance parisienne et de l’esprit des ateliers de couture. Nos pièces sont sélectionnées une à une auprès de fabricants partenaires, pour leurs dentelles, leurs finitions et leur tombé.</p><a class="btn" href="/boutique/" style="justify-self:start">Voir la sélection</a></div>
     <img class="m2 rv" src="{m2}" alt="" loading="lazy" referrerpolicy="no-referrer">
     <img class="m3 rv" src="{m3}" alt="" loading="lazy" referrerpolicy="no-referrer">
   </div>
 </section>
 
-<section class="film" data-frames="{FRAMES}" data-d="/film/d/" data-m="/film/m/" aria-label="Le film Eve Marly">
-  <div class="film-stage">
-    <canvas aria-hidden="true"></canvas>
-    <div class="loader" aria-hidden="true"></div>
-    {sc}
-    <div class="film-ui"><ol class="dots">{dots}</ol><span class="film-hint" aria-hidden="true">Faites défiler</span></div>
-  </div>
-</section>
 
 <section class="sec" aria-labelledby="mat-t">
   <div class="wrap split">
-    <img class="rv" src="{v2img('detail', '/img/dentelle.webp')}" alt="Détail de dentelle ivoire et fleurs séchées" loading="lazy">
+    <img class="rv" src="{v2img('detail', '/img/dentelle.webp')}" alt="Détail de dentelle noire sur satin" loading="lazy">
     <div>
       <div class="eyebrow">Les matières</div>
       <h2 id="mat-t">Trois matières, choisies <em>pour la peau.</em></h2>
@@ -412,8 +415,8 @@ def home():
 {waitlist()}
 </main>
 """
-    write('index.html', head(f'{BRAND} · Lingerie bohème en dentelle et satin, à prix doux',
-        'Eve Marly, lingerie élégante à prix doux : ensembles en dentelle, bralettes, bodies, nuisettes et kimonos en satin. Livraison offerte, suivie et discrète.',
+    write('index.html', head(f'{BRAND} · Maison de lingerie : dentelle, porte-jarretelles et satin',
+        'Eve Marly, maison de lingerie : parures en dentelle, porte-jarretelles, bodies, nuisettes et kimonos en satin. Livraison offerte, suivie et discrète.',
         '/', extra_ld=ld, preload=f'<link rel="preload" as="image" href="{a_img}">\n') + body + footer())
 
 def journal():
@@ -427,7 +430,7 @@ def journal():
               {"@type": "ListItem", "position": 2, "name": "Journal", "item": SITE + "/journal/"}]}]
     body = f"""<body class="page">
 {nav('journal')}
-<main id="contenu">
+<main id="contenu" class="light">
   <div class="pagehead">
     <p class="crumbs"><a href="/">Accueil</a> / Journal</p>
     <div class="eyebrow">Le Journal</div>
@@ -461,7 +464,7 @@ def article(a):
               {"@type": "ListItem", "position": 3, "name": a['title'], "item": SITE + path}]}]
     body = f"""<body class="page">
 {nav('journal')}
-<main id="contenu">
+<main id="contenu" class="light">
 <article class="article">
   <p class="crumbs"><a href="/">Accueil</a> / <a href="/journal/">Journal</a> / {e(a['cat'])}</p>
   <div class="eyebrow">{e(a['cat'])}</div>
@@ -472,7 +475,7 @@ def article(a):
   <aside class="cta-box">
     <div class="eyebrow">Première collection</div>
     <h2>Dentelle, satin et tulle, à prix doux.</h2>
-    <a class="btn" href="/#liste">Rejoindre la liste d'attente</a>
+    <a class="btn" href="/boutique/">Découvrir la boutique</a>
   </aside>
 </article>
 <section class="wrap related" aria-labelledby="rel-t">
@@ -487,7 +490,7 @@ def article(a):
 def simple(path, title, desc, h1, content, robots_index=True):
     body = f"""<body class="page">
 {nav()}
-<main id="contenu">
+<main id="contenu" class="light">
 <article class="article">
   <p class="crumbs"><a href="/">Accueil</a> / {e(h1)}</p>
   <h1>{e(h1)}</h1>
@@ -543,7 +546,7 @@ def legal():
 """)
     body = f"""<body class="page">
 {nav()}
-<main id="contenu">
+<main id="contenu" class="light">
 <article class="article" style="text-align:center;padding-top:60px">
   <div class="eyebrow">Erreur 404</div>
   <h1>Cette page s'est perdue en chemin.</h1>
@@ -559,8 +562,9 @@ def legal():
 # ---------- Boutique ----------
 import math
 PRODUCTS_DATA = json.load(open(os.path.join(os.path.dirname(__file__), 'products.json'), encoding='utf-8'))
-SHOP_CATS = ['Ensembles', 'Soutiens-gorge', 'Bralettes', 'Bodies', 'Nuisettes', 'Kimonos', 'Culottes', 'Pyjamas']
+SHOP_CATS = ['Porte-jarretelles', 'Ensembles', 'Soutiens-gorge', 'Bodies', 'Nuisettes', 'Kimonos', 'Culottes', 'Pyjamas']
 COEF = 2.5
+PRODUCTS_DATA.sort(key=lambda p: SHOP_CATS.index(p['cat']) if p['cat'] in SHOP_CATS else 99)
 
 def sell_price(cost):
     """Prix de vente = coût (produit + livraison) × 2,5, arrondi à x,90 €."""
@@ -583,7 +587,7 @@ def shop():
     ld = [{"@context": "https://schema.org", "@type": "CollectionPage", "name": f"Boutique {BRAND}", "url": SITE + "/boutique/"}]
     body = f"""<body class="page">
 {nav('boutique')}
-<main id="contenu">
+<main id="contenu" class="light">
   <div class="pagehead">
     <p class="crumbs"><a href="/">Accueil</a> / Boutique</p>
     <div class="eyebrow">La boutique</div>
@@ -619,7 +623,7 @@ def product_page(pr):
               {"@type": "ListItem", "position": 3, "name": pr['name'], "item": SITE + path}]}]
     body = f"""<body class="page">
 {nav('boutique')}
-<main id="contenu">
+<main id="contenu" class="light">
 <div class="wrap">
   <p class="crumbs"><a href="/">Accueil</a> / <a href="/boutique/">Boutique</a> / {e(pr['cat'])}</p>
   <div class="pdp">
