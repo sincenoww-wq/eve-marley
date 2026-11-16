@@ -96,7 +96,7 @@ function ui(p){
     var o = 1 - clamp((Math.abs(p-mid) - half*0.55)/(half*0.45), 0, 1);
     if(k===0 && p < mid) o = 1;
     if(k===S-1 && p > mid) o = 1;
-    scenes[k].style.opacity = o.toFixed(3);
+    scenes[k].style.opacity = o.toFixed(3); scenes[k].style.filter = o > .98 ? '' : 'blur(' + ((1 - o) * 10).toFixed(1) + 'px)'; scenes[k].style.letterSpacing = ((1 - o) * .06).toFixed(3) + 'em';
     scenes[k].classList.toggle('on', o > .5);
     if(bars[k]) bars[k].style.transform = 'scaleX(' + clamp((p-a)/(b-a),0,1).toFixed(3) + ')';
   }
@@ -175,6 +175,7 @@ if(reduce){ draw(N-1); } else { requestAnimationFrame(tick); }
       if(bb.bottom < -80 || bb.top > vh + 80) continue;
       var span = Math.max(1, bb.height - vh), p = clamp(-bb.top / span);
       if(reduce) p = r.lay === 'fan' ? 1 : 0;
+      if(!mq.matches){ if(r.bar && r.sc){ var mx = r.sc.scrollWidth - r.sc.clientWidth; r.bar.style.transform = 'scaleX(' + (mx > 0 ? r.sc.scrollLeft / mx : 1).toFixed(3) + ')'; } continue; }
       r.sp += (p - r.sp) * (reduce ? 1 : 0.12);
       if(r.bar) r.bar.style.transform = 'scaleX(' + r.sp.toFixed(3) + ')';
       if(r.lay === 'gal'){
@@ -183,7 +184,7 @@ if(reduce){ draw(N-1); } else { requestAnimationFrame(tick); }
           r.track.style.transform = 'translate3d(' + (-x).toFixed(1) + 'px,0,0) skewX(' + (-sk).toFixed(2) + 'deg)';
           if(r.word) r.word.style.transform = 'translate3d(' + (-x * 0.25).toFixed(1) + 'px,0,0)';
         }
-      } else if(r.lay === 'fan'){
+      } else if(r.lay === 'fan' && mq.matches){
         var n = r.cards.length, mid = (n - 1) / 2;
         for(var i=0;i<n;i++){
           var e = ease(clamp(r.sp / 0.72 - i * 0.05)), d = i - mid;
@@ -208,6 +209,41 @@ if(reduce){ draw(N-1); } else { requestAnimationFrame(tick); }
     requestAnimationFrame(tick);
   }
   requestAnimationFrame(tick);
+})();
+
+/* V6.1 : mobile — chaque salon devient un défilé horizontal (coverflow) */
+(function(){
+  if(window.matchMedia('(min-width: 981px)').matches) return;
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  Array.prototype.forEach.call(document.querySelectorAll('.room'), function(room){
+    var sc = room.querySelector('.track, .fan, .cols, .mos'); if(!sc) return;
+    sc.classList.add('mscroll');
+    var head = sc.querySelector('.panel-t'), pin = room.querySelector('.room-pin');
+    if(head && sc.classList.contains('track')){ var w = document.createElement('div'); w.className = 'wrap stage-m'; w.appendChild(head); pin.insertBefore(w, sc); }
+    if(!room.querySelector('.room-bar')){ var b = document.createElement('div'); b.className = 'room-bar'; b.setAttribute('aria-hidden','true'); b.innerHTML = '<b></b>'; pin.appendChild(b); }
+    var bar = room.querySelector('.room-bar b'), cards = sc.querySelectorAll('.fr'), raf = 0;
+    var cnt = document.createElement('div'); cnt.className = 'm-count'; cnt.setAttribute('aria-hidden','true'); pin.appendChild(cnt);
+    function upd(){
+      raf = 0;
+      var mid = sc.scrollLeft + sc.clientWidth / 2, best = 0, bd = 1e9, mx = sc.scrollWidth - sc.clientWidth;
+      for(var i=0;i<cards.length;i++){
+        var c = cards[i], cx = c.offsetLeft + c.offsetWidth / 2, d = Math.abs(cx - mid) / sc.clientWidth;
+        if(d < bd){ bd = d; best = i; }
+        if(!reduce){ var k = Math.min(1, d * 1.4); c.style.transform = 'scale(' + (1 - k * .1).toFixed(3) + ') translateY(' + (k * 14).toFixed(1) + 'px)'; c.style.opacity = (1 - k * .45).toFixed(3); }
+      }
+      if(bar) bar.style.transform = 'scaleX(' + (mx > 0 ? sc.scrollLeft / mx : 1).toFixed(3) + ')';
+      cnt.textContent = (best + 1 < 10 ? '0' : '') + (best + 1) + ' / ' + (cards.length < 10 ? '0' : '') + cards.length;
+    }
+    sc.addEventListener('scroll', function(){ if(!raf) raf = requestAnimationFrame(upd); }, {passive:true});
+    upd(); window.addEventListener('load', upd);
+  });
+})();
+
+/* V6.1 : filets dorés qui se tracent, reflets sur les cartes */
+(function(){
+  if(!('IntersectionObserver' in window)) return;
+  var io = new IntersectionObserver(function(es){ es.forEach(function(en){ if(en.isIntersecting){ en.target.classList.add('seen'); io.unobserve(en.target); } }); }, {threshold:.25});
+  Array.prototype.forEach.call(document.querySelectorAll('.eyebrow, .card, .steps li, .mood .txt, .panel-t'), function(el){ io.observe(el); });
 })();
 
 /* V4.1 : animations globales */

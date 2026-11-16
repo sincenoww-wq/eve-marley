@@ -47,6 +47,7 @@ def head(title, desc, path, img='/img/og.jpg', kind='website', extra_ld=None, pr
 <meta name="description" content="{e(desc)}">
 <link rel="canonical" href="{url}">
 <meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="view-transition" content="same-origin">
 <meta name="theme-color" content="#0b0608">
 <meta property="og:type" content="{kind}">
 <meta property="og:site_name" content="{BRAND}">
