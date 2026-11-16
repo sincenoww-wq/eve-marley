@@ -358,11 +358,25 @@ def home():
       <img class="a" src="{a_img}" alt="" width="650" height="813">
       <img class="b" src="{b_img}" alt="" loading="lazy" referrerpolicy="no-referrer">
       <img class="c" src="{c_img}" alt="" loading="lazy" referrerpolicy="no-referrer">
-      <div class="stamp">La<br>collection</div>
+      <div class="stamp">Ève<br><small>Images virtuelles</small></div>
     </div>
   </div>
 </section>
 <div class="marquee" aria-hidden="true"><div>{mq}</div></div>
+
+<section class="sec egerie" id="eve" aria-labelledby="eve-t">
+  <div class="wrap eg">
+    <div class="eg-txt">
+      <div class="eyebrow">L'égérie</div>
+      <h2 id="eve-t">Ève, <em>le visage de la maison.</em></h2>
+      <p>Parisienne, discrète, attachée aux belles matières : Ève incarne l'esprit d'Eve Marly. Elle présente les collections et partage ses rituels, du premier café en kimono de satin à la robe de nuit du soir.</p>
+      <p class="eg-note">Images virtuelles · Ève est un personnage créé par intelligence artificielle. Les pièces en vente sont présentées en boutique sur leurs photos réelles.</p>
+      <a class="btn" href="/boutique/">Voir la collection</a>
+    </div>
+    <figure class="eg-a rv"><img src="/img/eve/portrait.webp" alt="Ève, personnage virtuel, en kimono de satin ivoire" loading="lazy" width="797" height="990"><figcaption>Images virtuelles</figcaption></figure>
+    <figure class="eg-b rv"><img src="/img/eve/salon.webp" alt="Ève, personnage virtuel, en kimono de satin bordeaux" loading="lazy" width="1456" height="813"><figcaption>Images virtuelles</figcaption></figure>
+  </div>
+</section>
 
 {dressing_html()}
 <section class="sec" id="maison" aria-labelledby="maison-t" style="padding-top:20px">
