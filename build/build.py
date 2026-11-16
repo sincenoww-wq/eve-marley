@@ -672,6 +672,26 @@ def product_page(pr):
 """
     write(f"produit/{pr['slug']}/index.html", head(f"{pr['name']} · {euros(price)} | {BRAND}", pr['desc'][:155], path, img=imgs[0], kind='product', extra_ld=ld) + body + footer())
 
+def dynamic_files():
+    """Fichiers lus par le Worker et l'administration : modèle de fiche produit et catalogue."""
+    import re, shutil
+    fake = dict(slug='modele-fiche', name='%%NAME%%', cat='%%CAT%%', cost=400.0, images=['%%IMG0%%'], colors=['x'], sizes=['x'], desc='%%DESC%%', details=['x'])
+    product_page(fake)
+    d = os.path.join(ROOT, 'produit', 'modele-fiche')
+    h = open(os.path.join(d, 'index.html'), encoding='utf-8').read()
+    shutil.rmtree(d)
+    pr = sell_price(400.0)
+    h = h.replace(euros(pr), '%%PRICE%%').replace(f'{pr:.2f}', '%%PRICEN%%').replace('modele-fiche', '%%SLUG%%')
+    h = re.sub(r'<div class="pdp-thumbs">.*?</div>', '<div class="pdp-thumbs">%%THUMBS%%</div>', h, flags=re.S)
+    h = re.sub(r'<fieldset><legend>Couleur</legend>.*?</fieldset>', '%%COLORS%%', h, flags=re.S)
+    h = re.sub(r'<fieldset><legend>Taille .*?</fieldset>', '%%SIZES%%', h, flags=re.S)
+    h = re.sub(r'<details open><summary>Détails</summary>.*?</details>', '%%DETAILS%%', h, flags=re.S)
+    for k in ('THUMBS', 'COLORS', 'SIZES', 'DETAILS', 'PRICE', 'NAME', 'IMG0'): assert f'%%{k}%%' in h, k
+    write('assets/fiche-modele.txt', h)
+    cat = [dict(slug=p['slug'], name=p['name'], cat=p['cat'], price=sell_price(p['cost']), img=p['images'][0]) for p in PRODUCTS_DATA]
+    write('assets/catalogue.json', json.dumps(dict(cats=SHOP_CATS, products=cat), ensure_ascii=False))
+
+
 def seo_files():
     urls = [('/', '1.0', 'weekly'), ('/journal/', '0.8', 'weekly')]
     urls += [(f"/journal/{a['slug']}/", '0.7', 'monthly') for a in ARTICLES]
@@ -682,10 +702,10 @@ def seo_files():
     for u, p, c in urls:
         sm += f'  <url><loc>{SITE}{u}</loc><lastmod>{TODAY}</lastmod><changefreq>{c}</changefreq><priority>{p}</priority></url>\n'
     write('sitemap.xml', sm + '</urlset>\n')
-    write('robots.txt', f'User-agent: *\nAllow: /\nDisallow: /api/\n\nSitemap: {SITE}/sitemap.xml\n')
+    write('robots.txt', f'User-agent: *\nAllow: /\nDisallow: /api/\nDisallow: /admin/\n\nSitemap: {SITE}/sitemap.xml\n')
 
 if __name__ == '__main__':
     home(); journal()
     for a in ARTICLES: article(a)
-    shop(); legal(); seo_files()
+    shop(); dynamic_files(); legal(); seo_files()
     print('OK', FRAMES, 'images du film,', len(ARTICLES), 'articles')
